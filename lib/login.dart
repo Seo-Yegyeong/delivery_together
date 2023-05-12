@@ -3,17 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import 'Authentication.dart';
 import 'home.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<Login> {
+class _LoginPageState extends State<LoginPage> {
+
   CollectionReference database = FirebaseFirestore.instance.collection('user');
   late QuerySnapshot querySnapshot;
 
@@ -22,8 +22,7 @@ class _LoginPageState extends State<Login> {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-    await googleUser?.authentication;
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
@@ -55,50 +54,9 @@ class _LoginPageState extends State<Login> {
           child: Column(
             children: [
               Image.asset('assets/icon/cookie.png'),
-              // IconButton(
-              //   onPressed: () {},
-              //   icon: SvgPicture.asset("assets/icons/logo.svg"),
-              // ),
-
               const SizedBox(
                 height: 30,
               ),
-              // Container(
-              //   height: 80,
-              //   width: 300,
-              //   child: ElevatedButton(
-              //     onPressed: () {},
-              //     child: Text(
-              //       '네이버로 로그인',
-              //       style: TextStyle( fontFamily: "DoHyeonFont", fontSize: 30.0, color: Color(0xFF000000),),
-              //     ),
-              //     style: ElevatedButton.styleFrom(
-              //         primary: Color(0xFFFFC700),
-              //         shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(5.0))),
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 25,
-              // ),
-              // SizedBox(
-              //   height: 80,
-              //   width: 300,
-              //   child: ElevatedButton(
-              //     onPressed: () {},
-              //     child: Text(
-              //       '카카오로 로그인',
-              //       style: TextStyle( fontFamily: "DoHyeonFont", fontSize: 30.0, color: Color(0xFF000000),),
-              //     ),
-              //     style: ElevatedButton.styleFrom(
-              //         primary: Color(0xFFFFC700),
-              //         shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(5.0))),
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 25,
-              // ),
               Container(
                 height: 80,
                 width: 300,
@@ -141,7 +99,7 @@ class _LoginPageState extends State<Login> {
                     style: TextStyle( fontFamily: "DoHyeonFont", fontSize: 30.0, color: Color(0xFF000000),),
                   ),
                   style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFFFC700),
+                      backgroundColor: Color(0xFFFFC700),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.0))),
                 ),

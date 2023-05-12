@@ -1,9 +1,11 @@
-import 'package:delivery_together/order_list.dart';
+import 'package:delivery_together/DeliveryState.dart';
 import 'package:delivery_together/size.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'MyPage.dart';
+import 'list_detail.dart';
 import 'write_order.dart';
 
 class Home extends StatelessWidget {
@@ -38,10 +40,10 @@ class Home extends StatelessWidget {
           mainAxisSpacing: 25,
           crossAxisCount: 2,
           children: [
-            MyButton(),
-            MyButton(),
-            MyButton(),
-            MyButton(),
+            MyButton(index: 0,),
+            MyButton(index: 1,),
+            MyButton(index: 2,),
+            MyButton(index: 3,),
           ],
         ));
   }
@@ -49,9 +51,37 @@ class Home extends StatelessWidget {
 
 
 
-class MyButton extends StatelessWidget {
-  const MyButton({Key? key}) : super(key: key);
+class MyButton extends StatefulWidget {
+  int index;
 
+  MyButton({Key? key, required this.index}) : super(key: key);
+
+  static List<String> _menu = <String>[
+    '목록',
+    '글쓰기',
+    '배달현황',
+    '마이페이지'
+  ];
+
+  static List<String> _menuIcon = <String>[
+    'assets/icon/list.png',
+    'assets/icon/write.png',
+    'assets/icon/status.png',
+    'assets/icon/mypage.png',
+  ] ;
+
+  static List<Widget> _LinkTo = <Widget>[
+    ListDetailPage(),
+    WritePage(),
+    DeliveryStatePage(),
+    MyPage(),
+  ];
+
+  @override
+  State<MyButton> createState() => _MyButtonState();
+}
+
+class _MyButtonState extends State<MyButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -63,10 +93,10 @@ class MyButton extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(height: 40, width: 40, child: Image.asset('assets/icon/list.png'), decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(10)),),
+            Container(height: 40, width: 40, child: Image.asset(MyButton._menuIcon[widget.index] as String), decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(10)),),
             Center(
               child: Text(
-                '같이 묵자',
+                MyButton._menu[widget.index],
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
             )
@@ -74,7 +104,9 @@ class MyButton extends StatelessWidget {
         ),
       ),
       onTap: () {
-        Get.to(() => WritePage());
+        // _onItemTapped(_selectedIndex);
+        Get.to(() => MyButton._LinkTo[widget.index]);
+        print(widget.index);
       },
     );
   }
