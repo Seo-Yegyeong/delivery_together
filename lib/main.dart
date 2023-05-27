@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'MyInfo.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -28,7 +30,9 @@ class MyApp extends StatelessWidget {
       ),
       // home: Home(),
       initialRoute: '/auth',
-      routes: {'/auth': (BuildContext context) => const Authentication()},
+      routes: {
+        '/auth': (BuildContext context) => const Authentication(),
+      },
     );
   }
 }
