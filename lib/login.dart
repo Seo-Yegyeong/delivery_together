@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text(
                     '구글로 로그인',
-                    style: TextStyle( fontFamily: "DoHyeonFont", fontSize: 30.0, color: Color(0xFF000000),),
+                    style: TextStyle(fontSize: 30.0, color: Color(0xFF000000),),
                   ),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFFFC700),

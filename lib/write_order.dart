@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'size.dart';
+import 'components/components.dart';
 
 final _formKey = GlobalKey<FormState>();
 String _store_name = "";
@@ -20,29 +20,11 @@ class _WritePageState extends State<WritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(height: 45, width: 45, child: Image.asset('assets/icon/cookie.png'),),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                '같이 먹자',
-                style: TextStyle(fontSize: 30),
-              ),
-              SizedBox(width: 40,)
-            ],
-          ),
-        ),
-        toolbarHeight: getAppBarHeight(context),
-      ),
+      appBar: FixedAppBar(context),
       body: Container(
         decoration: BoxDecoration(color: Color(0xFF98A5B3)),
         child: Column(
-          children: [WritingForm(), SizedBox()],
+          children: [TitleWidget(context), WritingForm(), SizedBox()],
         ),
       ),
       bottomNavigationBar: Container(

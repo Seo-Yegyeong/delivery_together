@@ -1,22 +1,71 @@
 import 'package:flutter/material.dart';
 
-// class Components extends StatefulWidget {
-//   const Components({Key? key}) : super(key: key);
+import '../size.dart';
 
-//   @override
-//   State<Components> createState() => _ComponentsState();
-// }
+PreferredSizeWidget FixedAppBar(context) => AppBar(
+  title: Center(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(height: 45, width: 45, child: Image.asset('assets/icon/cookie.png'),),
+        SizedBox(
+          width: 10,
+        ),
+        Text(
+          '같이 먹자',
+          style: TextStyle(fontSize: 30),
+        ),
+        SizedBox(width: 40,)
+      ],
+    ),
+  ),
+  toolbarHeight: getAppBarHeight(context),
+);
 
-// class _ComponentsState extends State<Components> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return AppBar(
-//         // leading: Icon(icon: Icons.work),
-//         title: Center(child: Text('같이 먹자')),
-//         toolbarHeight: 100,
-//       );
-//   }
-// }
+Widget TitleWidget(context) => Column(
+  children: [
+    Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF67727D),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                width: 52,
+                height: 30,
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 25,
+                ),
+              ),
+            ),
+            const Text(
+              'Delivery State Page',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(width: 50,),
+          ],
+        ),
+      ),
+    ),              // Rest of your page content
+  ],
+);
 
 class Components {
   AppBar component_AppBar(){
