@@ -1,10 +1,10 @@
-import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/material.dart';
 import 'size.dart';
 
 final _formKey = GlobalKey<FormState>();
-const List<String> category_menu = <String>['category1', 'category2', 'category3', 'category4'];
+const List<String> category_menu = <String>['한식', '중식', '일식', '치킨', '피자', '분식', '패스트푸드', '카페&디저트'];
 String _store_name = "";
 String _pickup_spot = "";
 int _member_count = 0;
@@ -67,6 +67,7 @@ class _WritePageState extends State<WritePage> {
               if(form != null && form.validate()){
                 form.save();
                 printFormValues();
+                insertOnePost();
               }
             },
           ),
@@ -81,6 +82,16 @@ class _WritePageState extends State<WritePage> {
     logger.i('사람 수: $_member_count');
     logger.i('배달의 민족 링크: $_order_link');
     logger.i('카테고리: $_category');
+  }
+
+  // 디비에 저장하기
+  void insertOnePost() {
+    // final moviesRef = FirebaseFirestore.instance
+    //     .collection('together-e6cc2')
+    //     .withConverter<Movie>(
+    //   fromFirestore: (snapshots, _) => Movie.fromJson(snapshots.data()!),
+    //   toFirestore: (movie, _) => movie.toJson(),
+    // );
   }
 }
 
@@ -129,49 +140,58 @@ class _WritingForm extends State<WritingForm> {
     );
   }
 
-Widget InputField(String text, int index) {
-  return TextFormField(
-    //autovalidateMode: AutovalidateMode.always,
-    onSaved: (value) {
-      if (index == 0)
-        _store_name = value as String;
-      else if (index == 1)
-        _pickup_spot = value as String;
-      else if (index == 2)
-        _member_count = int.parse(value!);
-      else if (index == 3)
-        _order_link = value as String;
-    },
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        if (index == 0) {
-          return '가게 이름을 입력하세요';
-        } else if (index == 1) {
-          return '받을 장소를 입력하세요';
-        } else if (index == 2) {
-          return '사람 수를 입력하세요';
-        } else if (index == 3) {
-          return '배달의 민족 함께주문 링크를 입력하세요';
+  Widget InputField(String text, int index) {
+    return TextFormField(
+      //autovalidateMode: AutovalidateMode.always,
+      onSaved: (value) {
+        if (index == 0)
+          _store_name = value as String;
+        else if (index == 1)
+          _pickup_spot = value as String;
+        else if (index == 2)
+          _member_count = int.parse(value!);
+        else if (index == 3)
+          _order_link = value as String;
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          if (index == 0) {
+            return '가게 이름을 입력하세요';
+          } else if (index == 1) {
+            return '받을 장소를 입력하세요';
+          } else if (index == 2) {
+            return '사람 수를 입력하세요';
+          } else if (index == 3) {
+            return '배달의 민족 함께주문 링크를 입력하세요';
+          }
         }
-      }
-      return null;
-    },
-    // readOnly: (index == 1) ? true : false,
-    // initialValue: (index == 1)? FirebaseAuth.instance.currentUser!.email : null,
-    keyboardType: (index == 3) ? TextInputType.multiline : TextInputType.text,
-    // minLines: (index == 3) ? 40 : null,
-    // maxLines: (index == 3) ? 100 : null,
-    textInputAction: TextInputAction.next,
-    autofocus: true,
-    decoration: InputDecoration(
-      hintText: text,
-      // helperText: text,
-      // labelText: text,
-      labelStyle: TextStyle(
-        fontSize: 12,
+        return null;
+      },
+      // readOnly: (index == 1) ? true : false,
+      // initialValue: (index == 1)? FirebaseAuth.instance.currentUser!.email : null,
+      keyboardType: (index == 3) ? TextInputType.multiline : TextInputType.text,
+      // minLines: (index == 3) ? 40 : null,
+      // maxLines: (index == 3) ? 100 : null,
+      textInputAction: TextInputAction.next,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: text,
+        // helperText: text,
+        // labelText: text,
+        labelStyle: TextStyle(
+          fontSize: 12,
+        ),
+        //prefix: Text(text),
       ),
-      //prefix: Text(text),
-    ),
-  );
+    );
+  }
+
 }
+
+class DeliveryPostDTO{
+  late String store_name;
+  late String pickup_spot;
+  late int member_count;
+  late String order_link;
+  late String category;
 }
