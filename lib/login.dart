@@ -62,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () async {
+                    try{
                     final UserCredential userCredential =
                     await signInWithGoogle();
 
@@ -92,6 +93,9 @@ class _LoginPageState extends State<LoginPage> {
                           builder: (context) => Home(),
                         ),
                       );
+                    }
+                    } catch (e) {
+                      print('Login Error: $e');
                     }
                   },
                   child: Text(
