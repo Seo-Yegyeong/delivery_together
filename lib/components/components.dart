@@ -15,14 +15,14 @@ PreferredSizeWidget FixedAppBar(context) => AppBar(
           '같이 먹자',
           style: TextStyle(fontSize: 30),
         ),
-        SizedBox(width: 40,)
       ],
     ),
   ),
   toolbarHeight: getAppBarHeight(context),
+  automaticallyImplyLeading: false,
 );
 
-Widget TitleWidget(context) => Column(
+Widget TitleWidget(context, title) => Column(
   children: [
     Container(
       decoration: BoxDecoration(
@@ -51,15 +51,15 @@ Widget TitleWidget(context) => Column(
                 ),
               ),
             ),
-            const Text(
-              'Delivery State Page',
-              style: TextStyle(
+            Text(
+              title,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(width: 50,),
+            const SizedBox(width: 50,),
           ],
         ),
       ),
