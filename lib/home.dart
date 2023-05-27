@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'MyPage.dart';
+import 'list.dart';
 import 'list_detail.dart';
 import 'write_order.dart';
 
@@ -71,7 +72,7 @@ class MyButton extends StatefulWidget {
   ] ;
 
   static List<Widget> _LinkTo = <Widget>[
-    ListDetailPage(),
+    ListPage(),
     WritePage(),
     DeliveryStatePage(),
     MyPage(),
