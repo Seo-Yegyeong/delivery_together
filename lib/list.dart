@@ -1,14 +1,16 @@
+import 'package:delivery_together/write_order.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
-class DeliveryStatePage extends StatefulWidget {
-  const DeliveryStatePage({Key? key}) : super(key: key);
+class ListPage extends StatefulWidget {
+  const ListPage({Key? key}) : super(key: key);
 
   @override
-  State<DeliveryStatePage> createState() => _DeliveryStatePageState();
+  State<ListPage> createState() => _ListPageState();
 }
 
-class _DeliveryStatePageState extends State<DeliveryStatePage> {
-  int _radioValue = 0;
+class _ListPageState extends State<ListPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +72,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                         ),
                       ),
                       const Text(
-                        'Delivery State Page',
+                        'List Page',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -88,34 +90,24 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                             color: const Color(0xFF284463),
                             borderRadius: BorderRadius.circular(26),
                           ),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/icon/write.png',
-                              width: 42,
+                          child: GestureDetector(
+                            onTap: (){
+                              Get.to(() => WritePage());
+                            },
+                            child:
+                            Center(
+                              child: Image.asset(
+                                'assets/icon/write.png',
+                                width: 42,
+                              ),
                             ),
-                          ),
+                          )
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  5,
-                      (index) => Radio(
-                    value: index,
-                    groupValue: _radioValue,
-                    onChanged: (int? value) {
-                      setState(() {
-                        _radioValue = value!;
-                      });
-                    },
-                  ),
-                ),
-              ),
-              // Rest of your page content
             ],
           ),
         ),

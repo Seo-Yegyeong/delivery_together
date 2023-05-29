@@ -43,8 +43,8 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
           child: Column(
             children: [
               Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF67727D),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF67727D),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30),

@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delivery_together/App.dart';
-import 'package:delivery_together/Authentication.dart';
-import 'package:delivery_together/home.dart';
+import 'Authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'firebase_options.dart';
 
 bool shouldUseFirestoreEmulator = false;
@@ -37,7 +34,9 @@ class MyApp extends StatelessWidget {
       ),
       // home: Home(),
       initialRoute: '/auth',
-      routes: {'/auth': (BuildContext context) => const Authentication()},
+      routes: {
+        '/auth': (BuildContext context) => const Authentication(),
+      },
     );
   }
 }
