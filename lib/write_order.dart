@@ -120,32 +120,44 @@ class _WritingForm extends State<WritingForm> {
           child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 InputField("가게 이름", 0),
                 InputField("받을 장소", 1),
+                Text('주문 예정 시각', style: TextStyle(color: Colors.white, fontSize: 20),),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 10.0, 0, 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text('$hours:$minutes', style: TextStyle(fontSize: 30)),
-                      ElevatedButton(
-                          onPressed: () async {
-                            TimeOfDay? newTime = await showTimePicker(context: context, initialTime: time);
-                            if(newTime == null) return;
-                            setState(() { time = newTime; });
-                          },
-                          child: Text('Time picker', style: TextStyle(fontSize: 25),),
-                          style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith((color) => Color(0xFF67727D))),
-                      ),
-                    ],
+                  padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
+                  child: Container(
+                    height: 60,
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text('$hours:$minutes', style: TextStyle(fontSize: 30)),
+                        ElevatedButton(
+                            onPressed: () async {
+                              TimeOfDay? newTime = await showTimePicker(context: context, initialTime: time);
+                              if(newTime == null) return;
+                              setState(() { time = newTime; });
+                            },
+                            child: Text('Time picker', style: TextStyle(fontSize: 25),),
+                            style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith((color) => Color(0xFF67727D))),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+                Text('카테고리', style: TextStyle(color: Colors.white, fontSize: 20),),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Container(
                     height: 60,
+                    padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15),
@@ -154,6 +166,7 @@ class _WritingForm extends State<WritingForm> {
                       value: dropdownValue,
                       icon: const Icon(Icons.arrow_downward),
                       underline: SizedBox.shrink(),
+                      style: TextStyle(fontSize: 25, color: Colors.black),
                       onChanged: (String? value) {
                         setState(() {
                           dropdownValue = value!;
