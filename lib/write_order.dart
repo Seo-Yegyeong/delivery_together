@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'components/components.dart';
 
 final _formKey = GlobalKey<FormState>();
 String _store_name = "";
 String _pickup_spot = "";
-late DateTime _order_time;
+// late DateTime _order_time;
+late DateTime _current_time;
 String _category = "";
 int _member_count = 0;
 String _order_link = "";
@@ -21,6 +24,8 @@ class WritePage extends StatefulWidget {
 }
 
 class _WritePageState extends State<WritePage> {
+  final user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +45,47 @@ class _WritePageState extends State<WritePage> {
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.resolveWith(
                     (color) => Color(0xFF284463))),
-            onPressed: () {},
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                print('_store_name ' + _store_name + ' *****');
+                print('_pickup_spot ' + _pickup_spot + ' *****');
+                // print('_order_time' + _order_time);
+                print('_category ' + _category + ' *****');
+                print('_member_count ' + _member_count.toString());
+                print('_memo ' + _memo);
+                print('link ' + _order_link);
+
+                CollectionReference post = FirebaseFirestore.instance.collection('post');
+                CollectionReference postUser = FirebaseFirestore.instance.collection('postUser');
+                _current_time = DateTime.now();
+
+                post.add({
+                  'storeName': _store_name,
+                  'pickupSpot': _pickup_spot,
+                  'category': _category,
+                  'memberTotalCount': _member_count,
+                  'link': _order_link,
+                  'memo': _memo,
+                  'orderTime': _current_time.toLocal(),
+                  'createdTime': _current_time.toLocal(),
+                });
+                print('===========test1==========');
+                QuerySnapshot querySnapshot = await post.get();
+                // test: print('doc id: ' + querySnapshot.docs.last.id);
+                postUser.add({
+                  'postId': querySnapshot.docs.last.id,
+                  'memberId': user?.email,
+                  'isWriter': true
+                });
+
+                print('===========test2==========');
+                print('postId: ' + querySnapshot.docs.last.id +
+                    'memberId: ' + user!.email.toString() +
+                    'isWriter: ' + true.toString()
+                );
+              }
+            },
           ),
         ),
       ),
@@ -58,7 +103,6 @@ Widget WritingForm(context) => Form(
               InputField("가게 이름", 0),
               InputField("받을 장소", 1),
               InputField("주문예정시각", 2),
-              DropdownButtonExample(),
               InputField('카테고리', 3),
               InputField("모집 인원", 4),
               InputField("배달의 민족 함께주문 링크", 5),
@@ -132,12 +176,12 @@ Widget InputField(String text, int index) {
                 _store_name = value as String;
               else if (index == 1)
                 _pickup_spot = value as String;
-              else if (index == 2)
-                _order_time = value as DateTime;
+              // else if (index == 2)
+              //   _order_time = value as DateTime;
               else if (index == 3)
                 _category = value as String;
               else if (index == 4)
-                _member_count = value as int;
+                _member_count = int.parse(value!);
               else if (index == 5)
                 _order_link = value as String;
               else if (index == 6)
@@ -147,19 +191,27 @@ Widget InputField(String text, int index) {
               if (value == null || value.isEmpty) {
                 if (index == 0) {
                   return '가게 이름을 입력하세요';
+                } else if (index == 1) {
+                  return '수령 장소를 입력하세요';
                 } else if (index == 2) {
-                  return '제목을 입력하세요';
+                  return '주문 예정 시각을 입력하세요';
                 } else if (index == 3) {
-                  return '내용을 입력하세요';
+                  // return '을 입력하세요';
+                } else if (index == 4) {
+                  return '모집 인원을 입력하세요';
+                } else if (index == 5) {
+                  return '같이주문 링크를 입력하세요';
+                } else if (index == 6) {
+                  // return '내용을 입력하세요';
                 }
               }
               return null;
             },
-            readOnly: (index == 1) ? true : false,
+            // readOnly: (index == 1) ? true : false,
             // initialValue: (index == 1)? FirebaseAuth.instance.currentUser!.email : null,
-            keyboardType: (index == 3) ? TextInputType.multiline : TextInputType.text,
-            // minLines: (index == 3) ? 40 : null,
-            // maxLines: (index == 3) ? 100 : null,
+            keyboardType: (index == 6) ? TextInputType.multiline : TextInputType.text,
+            minLines: (index == 6) ? 10 : null,
+            maxLines: (index == 6) ? 30 : null,
             textInputAction: TextInputAction.next,
             autofocus: true,
             decoration: const InputDecoration(

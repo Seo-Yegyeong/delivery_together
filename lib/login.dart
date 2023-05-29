@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  CollectionReference database = FirebaseFirestore.instance.collection('user');
+  CollectionReference userCollection = FirebaseFirestore.instance.collection('user');
   late QuerySnapshot querySnapshot;
 
   Future<UserCredential> signInWithGoogle() async {
@@ -63,37 +63,36 @@ class _LoginPageState extends State<LoginPage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     try{
-                    final UserCredential userCredential =
-                    await signInWithGoogle();
+                      final UserCredential userCredential = await signInWithGoogle();
 
-                    User? user = userCredential.user;
+                      User? user = userCredential.user;
 
-                    if (user != null) {
-                      int i;
-                      querySnapshot = await database.get();
+                      if (user != null) {
+                        int i;
+                        querySnapshot = await userCollection.get();
 
-                      for (i = 0; i < querySnapshot.docs.length; i++) {
-                        var a = querySnapshot.docs[i];
+                        for (i = 0; i < querySnapshot.docs.length; i++) {
+                          var a = querySnapshot.docs[i];
 
                         if (a.get('uid') == user.uid) {
                           break;
                         }
                       }
 
-                      if (i == (querySnapshot.docs.length)) {
-                        database.doc(user.uid).set({
-                          'email': user.email.toString(),
-                          'name': user.displayName.toString(),
-                          'uid': user.uid,
-                        });
+                        print('=============test1=============');
+                        if (i == (querySnapshot.docs.length)) {
+                          userCollection.doc(user.uid).set({
+                            'email': user.email,
+                            'name': user.displayName.toString(),
+                          });
+                        }
+                        print('=============test2=============');
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => Home(),
+                          ),
+                        );
                       }
-
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => Home(),
-                        ),
-                      );
-                    }
                     } catch (e) {
                       print('Login Error: $e');
                     }
