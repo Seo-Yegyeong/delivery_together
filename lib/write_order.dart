@@ -8,18 +8,13 @@ final _formKey = GlobalKey<FormState>();
 const List<String> category_menu = <String>['한식', '중식', '일식', '치킨', '피자', '분식', '패스트푸드', '카페&디저트'];
 String _store_name = "";
 String _pickup_spot = "";
-// late DateTime _order_time;
+late DateTime _order_time;
 late DateTime _current_time;
-String _category = "";
 int _member_count = 0;
 String _order_link = "";
 
 String _category = category_menu.first;
-late DateTime _dateTime;
 var logger = Logger();
-
-int _delivery_state = 0;
-String _additional = "";
 String _memo = "";
 
 
@@ -41,7 +36,7 @@ class _WritePageState extends State<WritePage> {
       body: Container(
         decoration: BoxDecoration(color: Color(0xFF98A5B3)),
         child: Column(
-          children: [TitleWidget(context, '글쓰기'), WritingForm(context), SizedBox()],
+          children: [TitleWidget(context, '글쓰기'), WritingForm(), SizedBox()],
         ),
       ),
       bottomNavigationBar: Container(
@@ -69,18 +64,20 @@ class _WritePageState extends State<WritePage> {
                 print('link ' + _order_link);
 
                 CollectionReference post = FirebaseFirestore.instance.collection('post');
-                CollectionReference postUser = FirebaseFirestore.instance.collection('postUser');
+                CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
                 _current_time = DateTime.now();
 
                 post.add({
                   'storeName': _store_name,
                   'pickupSpot': _pickup_spot,
                   'category': _category,
-                  'memberTotalCount': _member_count,
+                  'memTotalCnt': _member_count,
+                  'memCurrentCnt': 0,
                   'link': _order_link,
                   'memo': _memo,
                   'orderTime': _current_time.toLocal(),
                   'createdTime': _current_time.toLocal(),
+                  'state': 0,
                 });
                 print('===========test1==========');
                 QuerySnapshot querySnapshot = await post.get();
@@ -113,17 +110,17 @@ class _WritePageState extends State<WritePage> {
   }
 
   // 디비에 저장하기
-  void insertOnePost() {
+  // void insertOnePost() {
     // final moviesRef = FirebaseFirestore.instance
     //     .collection('together-e6cc2')
     //     .withConverter<Movie>(
     //   fromFirestore: (snapshots, _) => Movie.fromJson(snapshots.data()!),
     //   toFirestore: (movie, _) => movie.toJson(),
     // );
-  }
+  // }
 }
 
-/*class WritingForm extends StatefulWidget {
+class WritingForm extends StatefulWidget {
   const WritingForm({super.key});
 
   @override
@@ -131,12 +128,10 @@ class _WritePageState extends State<WritePage> {
 }
 
 class _WritingForm extends State<WritingForm> {
+  String dropdownValue = category_menu.first;
   @override
   Widget build(BuildContext context) {
-    return Form(*/
-
-
-Widget WritingForm(context) => Form(
+    return Form(
       key: _formKey,
       child: Expanded(
         child: SingleChildScrollView(
@@ -147,11 +142,13 @@ Widget WritingForm(context) => Form(
               InputField("받을 장소", 1),
               InputField("주문예정시각", 2),
               DropdownButton(
-                value: _category,
+                value: dropdownValue,
                 icon: const Icon(Icons.arrow_downward),
                 onChanged: (String? value) {
                   setState(() {
-                    _category = value!;
+                    dropdownValue = value!;
+                    _category = dropdownValue;
+                    print('============ my value: ' + dropdownValue + ".............");
                   });
                 },
                 items: category_menu.map<DropdownMenuItem<String>>((String value) {
@@ -160,186 +157,85 @@ Widget WritingForm(context) => Form(
                     child: Text(value),
                   );
                 }).toList(),
-              )
-              InputField('카테고리', 3),
+              ),
               InputField("모집 인원", 4),
               InputField("배달의 민족 함께주문 링크", 5),
               InputField('메모', 6),
-              // SizedBox(height: 16,),
+              SizedBox(height: 16,),
             ],
           ),
         ),
       ),
     );
-  //}
-
-
-  /*Widget InputField(String text, int index) {
-    return TextFormField(
-      //autovalidateMode: AutovalidateMode.always,
-      onSaved: (value) {
-        if (index == 0)
-          _store_name = value as String;
-        else if (index == 1)
-          _pickup_spot = value as String;
-        else if (index == 2)
-          _member_count = int.parse(value!);
-        else if (index == 3)
-          _order_link = value as String;
-      },
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          if (index == 0) {
-            return '가게 이름을 입력하세요';
-          } else if (index == 1) {
-            return '받을 장소를 입력하세요';
-          } else if (index == 2) {
-            return '사람 수를 입력하세요';
-          } else if (index == 3) {
-            return '배달의 민족 함께주문 링크를 입력하세요';
-          }
-        }
-        return null;
-      },
-      // readOnly: (index == 1) ? true : false,
-      // initialValue: (index == 1)? FirebaseAuth.instance.currentUser!.email : null,
-      keyboardType: (index == 3) ? TextInputType.multiline : TextInputType.text,
-      // minLines: (index == 3) ? 40 : null,
-      // maxLines: (index == 3) ? 100 : null,
-      textInputAction: TextInputAction.next,
-      autofocus: true,
-      decoration: InputDecoration(
-        hintText: text,
-        // helperText: text,
-        // labelText: text,
-        labelStyle: TextStyle(
-          fontSize: 12,
-        ),
-        //prefix: Text(text),
-      ),
-    );
   }
 
-}*/
-
-class DeliveryPostDTO{
-  late String store_name;
-  late String pickup_spot;
-  late int member_count;
-  late String order_link;
-  late String category;
-}
-
-const List<String> list = <String>['디저트', '한식', '양식', '중식', '일식', '기타'];
-
-class DropdownButtonExample extends StatefulWidget {
-  const DropdownButtonExample({super.key});
-
-  @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
-}
-
-class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = list.first;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
-      onChanged: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-          _category = dropdownValue;
-        });
-      },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      dropdownColor: Colors.white,
-    );
-  }
-}
-
-
-Widget InputField(String text, int index) {
-  return Container(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(text, style: TextStyle(color: Colors.white, fontSize: 20),),
-        Container(
-          height: 60,
-          padding: EdgeInsets.symmetric(horizontal: 11),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: TextFormField(
-            //autovalidateMode: AutovalidateMode.always,
-            onSaved: (value) {
-              if (index == 0)
-                _store_name = value as String;
-              else if (index == 1)
-                _pickup_spot = value as String;
-              // else if (index == 2)
-              //   _order_time = value as DateTime;
-              else if (index == 3)
-                _category = value as String;
-              else if (index == 4)
-                _member_count = int.parse(value!);
-              else if (index == 5)
-                _order_link = value as String;
-              else if (index == 6)
-                _memo = value as String;
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                if (index == 0) {
-                  return '가게 이름을 입력하세요';
-                } else if (index == 1) {
-                  return '수령 장소를 입력하세요';
-                } else if (index == 2) {
-                  return '주문 예정 시각을 입력하세요';
-                } else if (index == 3) {
-                  // return '을 입력하세요';
-                } else if (index == 4) {
-                  return '모집 인원을 입력하세요';
-                } else if (index == 5) {
-                  return '같이주문 링크를 입력하세요';
-                } else if (index == 6) {
-                  // return '내용을 입력하세요';
+  Widget InputField(String text, int index) {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(text, style: TextStyle(color: Colors.white, fontSize: 20),),
+          Container(
+            height: 60,
+            padding: EdgeInsets.symmetric(horizontal: 11),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: TextFormField(
+              //autovalidateMode: AutovalidateMode.always,
+              onSaved: (value) {
+                if (index == 0)
+                  _store_name = value as String;
+                else if (index == 1)
+                  _pickup_spot = value as String;
+                // else if (index == 2)
+                //   _order_time = value as DateTime;
+                else if (index == 4)
+                  _member_count = int.parse(value!);
+                else if (index == 5)
+                  _order_link = value as String;
+                else if (index == 6)
+                  _memo = value as String;
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  if (index == 0) {
+                    return '가게 이름을 입력하세요';
+                  } else if (index == 1) {
+                    return '받을 장소를 입력하세요';
+                  } else if (index == 2) {
+                    return '주문 예정 시각을 입력하세요';
+                  } else if (index == 3) {
+                    // return '을 입력하세요';
+                  } else if (index == 4) {
+                    return '모집 인원수를 입력하세요';
+                  } else if (index == 5) {
+                    return '배달의 민족 함께주문 링크를 입력하세요';
+                  } else if (index == 6) {
+                    // return '내용을 입력하세요';
+                  }
                 }
-              }
-              return null;
-            },
-            // readOnly: (index == 1) ? true : false,
-            // initialValue: (index == 1)? FirebaseAuth.instance.currentUser!.email : null,
-            keyboardType: (index == 6) ? TextInputType.multiline : TextInputType.text,
-            minLines: (index == 6) ? 10 : null,
-            maxLines: (index == 6) ? 30 : null,
-            textInputAction: TextInputAction.next,
-            autofocus: true,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
-            style: TextStyle(
-              fontSize: 30,
+                return null;
+              },
+              // readOnly: (index == 1) ? true : false,
+              // initialValue: (index == 1)? FirebaseAuth.instance.currentUser!.email : null,
+              keyboardType: (index == 6) ? TextInputType.multiline : TextInputType.text,
+              minLines: (index == 6) ? 10 : null,
+              maxLines: (index == 6) ? 30 : null,
+              textInputAction: TextInputAction.next,
+              autofocus: true,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+              ),
+              style: TextStyle(
+                fontSize: 30,
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 10,)
-      ],
-    ),
-  );
+          SizedBox(height: 10,)
+        ],
+      ),
+    );
+  }
 }
