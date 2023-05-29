@@ -35,69 +35,64 @@ class _WritePageState extends State<WritePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: (){
-        return Future(()=>false);
-      },
-      child: Scaffold(
-        appBar: FixedAppBar(context),
-        body: Container(
-          decoration: BoxDecoration(color: Color(0xFF98A5B3)),
-          child: Column(
-            children: [TitleWidget(context, '글쓰기'), WritingForm(), SizedBox()],
-          ),
+    return Scaffold(
+      appBar: FixedAppBar(context),
+      body: Container(
+        decoration: BoxDecoration(color: Color(0xFF98A5B3)),
+        child: Column(
+          children: [TitleWidget(context, '글쓰기'), WritingForm(), SizedBox()],
         ),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(color: Color(0xFF98A5B3)),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: ElevatedButton(
-              child: Text('올리기'),
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith(
-                      (color) => Color(0xFF284463))),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(color: Color(0xFF98A5B3)),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: ElevatedButton(
+            child: Text('올리기'),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith(
+                    (color) => Color(0xFF284463))),
 
-              onPressed: () async {
-                final form = _formKey.currentState;
-                if (form != null && form.validate()) {
-                  form.save();
-                  printFormValues();
+            onPressed: () async {
+              final form = _formKey.currentState;
+              if (form != null && form.validate()) {
+                form.save();
+                printFormValues();
 
-                  CollectionReference post = FirebaseFirestore.instance.collection('post');
-                  CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
-                  _current_time = DateTime.now(); //2023-05-29 18:04:45.425863
-                  DateTime orderDateTime = DateFormat('yyyy-MM-dd hh:mm:ss').parse('${DateFormat('yyyy-MM-dd').format(_current_time)} $_order_time');
+                CollectionReference post = FirebaseFirestore.instance.collection('post');
+                CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
+                _current_time = DateTime.now(); //2023-05-29 18:04:45.425863
+                DateTime orderDateTime = DateFormat('yyyy-MM-dd hh:mm:ss').parse('${DateFormat('yyyy-MM-dd').format(_current_time)} $_order_time');
 
-                  print('in 올리기 버튼 - _current_time : ' + _current_time.toString());
-                  print('in 올리기 버튼 - orderDateTime : ' + orderDateTime.toString());
+                print('in 올리기 버튼 - _current_time : ' + _current_time.toString());
+                print('in 올리기 버튼 - orderDateTime : ' + orderDateTime.toString());
 
 
-                  QuerySnapshot querySnapshot = await post.get();
-                  var postID = querySnapshot.size.toString();
+                QuerySnapshot querySnapshot = await post.get();
+                var postID = querySnapshot.size.toString();
 
-                  post.doc(postID).set({
-                    'storeName': _store_name,
-                    'pickupSpot': _pickup_spot,
-                    'category': _category,
-                    'memTotalCnt': _member_count,
-                    'memCurrentCnt': 0,
-                    'link': _order_link,
-                    'memo': _memo,
-                    'orderTime': orderDateTime.toLocal(),
-                    'createdTime': _current_time.toLocal(),
-                    'state': 0,
-                  });
+                post.doc(postID).set({
+                  'storeName': _store_name,
+                  'pickupSpot': _pickup_spot,
+                  'category': _category,
+                  'memTotalCnt': _member_count,
+                  'memCurrentCnt': 0,
+                  'link': _order_link,
+                  'memo': _memo,
+                  'orderTime': orderDateTime,
+                  'createdTime': _current_time,
+                  'state': 0,
+                });
 
-                  postUser.add({
-                    'postId': postID,
-                    'memberId': user?.email,
-                    'isWriter': true
-                  });
+                postUser.add({
+                  'postId': postID,
+                  'memberId': user?.email,
+                  'isWriter': true
+                });
 
-                  Get.to(()=>ListPage());
-                }
-              },
-            ),
+                Get.to(()=>ListPage());
+              }
+            },
           ),
         ),
       ),
@@ -225,7 +220,7 @@ class _WritingForm extends State<WritingForm> {
         children: [
           Text(text, style: TextStyle(color: Colors.white, fontSize: 20),),
           Container(
-            height: 60,
+            height: (index == 6)? 200: 60,
             padding: EdgeInsets.symmetric(horizontal: 11),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -253,18 +248,16 @@ class _WritingForm extends State<WritingForm> {
                     return '가게 이름을 입력하세요';
                   } else if (index == 1) {
                     return '받을 장소를 입력하세요';
-                  } else if (index == 2) {
-                    return '주문 예정 시각을 입력하세요';
-                  } else if (index == 3) {
-                    // return '을 입력하세요';
                   } else if (index == 4) {
                     return '모집 인원수를 입력하세요';
                   } else if (index == 5) {
                     return '배달의 민족 함께주문 링크를 입력하세요';
-                  } else if (index == 6) {
-                    // return '내용을 입력하세요';
                   }
                 }
+                if (index == 4 && value != int){
+                  return '숫자를 입력하세요';
+                }
+
                 return null;
               },
               // readOnly: (index == 1) ? true : false,
