@@ -42,13 +42,13 @@ class _WritePageState extends State<WritePage> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(color: Color(0xFF98A5B3)),
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.symmetric(horizontal: 10),
           child: ElevatedButton(
             child: Text('올리기'),
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.resolveWith(
                     (color) => Color(0xFF284463))),
-            
+
             onPressed: () async {
               final form = _formKey.currentState;
               if (form != null && form.validate()) {
@@ -105,39 +105,76 @@ class WritingForm extends StatefulWidget {
 
 class _WritingForm extends State<WritingForm> {
   String dropdownValue = category_menu.first;
+  TimeOfDay time = TimeOfDay.now();
+
   @override
   Widget build(BuildContext context) {
+    final hours = time.hour.toString().padLeft(2, '0');
+    final minutes = time.minute.toString().padLeft(2, '0');
+
     return Form(
       key: _formKey,
       child: Expanded(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-          child: Column(
-            children: <Widget>[
-              InputField("가게 이름", 0),
-              InputField("받을 장소", 1),
-              InputField("주문예정시각", 2),
-              DropdownButton(
-                value: dropdownValue,
-                icon: const Icon(Icons.arrow_downward),
-                onChanged: (String? value) {
-                  setState(() {
-                    dropdownValue = value!;
-                    _category = dropdownValue;
-                  });
-                },
-                items: category_menu.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              InputField("모집 인원", 4),
-              InputField("배달의 민족 함께주문 링크", 5),
-              InputField('메모', 6),
-              SizedBox(height: 16,),
-            ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+            child: Column(
+              children: <Widget>[
+                InputField("가게 이름", 0),
+                InputField("받을 장소", 1),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 10.0, 0, 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('$hours:$minutes', style: TextStyle(fontSize: 30)),
+                      ElevatedButton(
+                          onPressed: () async {
+                            TimeOfDay? newTime = await showTimePicker(context: context, initialTime: time);
+                            if(newTime == null) return;
+                            setState(() { time = newTime; });
+                          },
+                          child: Text('Time picker', style: TextStyle(fontSize: 25),),
+                          style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith((color) => Color(0xFF67727D))),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: DropdownButton(
+                      value: dropdownValue,
+                      icon: const Icon(Icons.arrow_downward),
+                      underline: SizedBox.shrink(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          dropdownValue = value!;
+                          _category = dropdownValue;
+                        });
+                      },
+                      items: category_menu.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                InputField("모집 인원", 4),
+                InputField("배달의 민족 함께주문 링크", 5),
+                InputField('메모', 6),
+                SizedBox(height: 16,),
+              ],
+            ),
           ),
         ),
       ),
