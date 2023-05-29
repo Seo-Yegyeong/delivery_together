@@ -1,15 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_together/utils/components.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'list.dart';
 
 final _formKey = GlobalKey<FormState>();
 const List<String> category_menu = <String>['한식', '중식', '일식', '치킨', '피자', '분식', '패스트푸드', '카페&디저트'];
 String _store_name = "";
 String _pickup_spot = "";
-late DateTime _order_time;
-late DateTime _current_time;
+String _order_time = "";
+DateTime _current_time = DateTime.now();
 int _member_count = 0;
 String _order_link = "";
 
@@ -57,7 +61,15 @@ class _WritePageState extends State<WritePage> {
 
                 CollectionReference post = FirebaseFirestore.instance.collection('post');
                 CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
-                _current_time = DateTime.now();
+                _current_time = DateTime.now(); //2023-05-29 18:04:45.425863
+                DateTime orderDateTime = DateFormat('yyyy-MM-dd hh:mm:ss').parse('${DateFormat('yyyy-MM-dd').format(_current_time)} $_order_time');
+
+                print('in 올리기 버튼 - _current_time : ' + _current_time.toString());
+                print('in 올리기 버튼 - orderDateTime : ' + orderDateTime.toString());
+
+                // if (kDebugMode) {
+                //   print('ㅇ여기야 여기$orderDate');
+                // }
 
                 post.add({
                   'storeName': _store_name,
@@ -67,7 +79,7 @@ class _WritePageState extends State<WritePage> {
                   'memCurrentCnt': 0,
                   'link': _order_link,
                   'memo': _memo,
-                  'orderTime': _current_time.toLocal(),
+                  'orderTime': orderDateTime.toLocal(),
                   'createdTime': _current_time.toLocal(),
                   'state': 0,
                 });
@@ -79,6 +91,8 @@ class _WritePageState extends State<WritePage> {
                   'memberId': user?.email,
                   'isWriter': true
                 });
+
+                Get.to(()=>ListPage());
               }
             },
           ),
@@ -87,12 +101,14 @@ class _WritePageState extends State<WritePage> {
     );
   }
 
+  /* For test */
   void printFormValues() {
     logger.i('가게 이름: $_store_name');
     logger.i('받을 장소: $_pickup_spot');
     logger.i('사람 수: $_member_count');
     logger.i('배달의 민족 링크: $_order_link');
     logger.i('카테고리: $_category');
+    logger.i('시간: ', _current_time);
   }
 }
 
@@ -141,9 +157,15 @@ class _WritingForm extends State<WritingForm> {
                         Text('$hours:$minutes', style: TextStyle(fontSize: 30)),
                         ElevatedButton(
                             onPressed: () async {
-                              TimeOfDay? newTime = await showTimePicker(context: context, initialTime: time);
+                              TimeOfDay? newTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
                               if(newTime == null) return;
-                              setState(() { time = newTime; });
+                              setState(() {
+                                time = newTime;
+                                final hours = time.hour.toString().padLeft(2, '0');
+                                final minutes = time.minute.toString().padLeft(2, '0');
+                                _order_time = '$hours:$minutes:00';
+                                print('in time picker button : ' + _order_time);
+                              });
                             },
                             child: Text('Time picker', style: TextStyle(fontSize: 25),),
                             style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith((color) => Color(0xFF67727D))),
