@@ -1,12 +1,11 @@
 import 'package:delivery_together/DeliveryState.dart';
-import 'package:delivery_together/size.dart';
+import 'package:delivery_together/utils/size.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'MyPage.dart';
 import 'list.dart';
-import 'list_detail.dart';
 import 'write_order.dart';
 
 

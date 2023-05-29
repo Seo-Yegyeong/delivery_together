@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../size.dart';
+import 'size.dart';
 
 PreferredSizeWidget FixedAppBar(context) => AppBar(
   title: Center(

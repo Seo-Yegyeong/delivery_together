@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'size.dart';
+import 'utils/size.dart';
 
 class ListDetailPage extends StatefulWidget {
   @override
