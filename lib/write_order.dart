@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:logger/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'components/components.dart';
 
 final _formKey = GlobalKey<FormState>();
+const List<String> category_menu = <String>['한식', '중식', '일식', '치킨', '피자', '분식', '패스트푸드', '카페&디저트'];
 String _store_name = "";
 String _pickup_spot = "";
 // late DateTime _order_time;
@@ -11,9 +13,15 @@ late DateTime _current_time;
 String _category = "";
 int _member_count = 0;
 String _order_link = "";
+
+String _category = category_menu.first;
+late DateTime _dateTime;
+var logger = Logger();
+
 int _delivery_state = 0;
 String _additional = "";
 String _memo = "";
+
 
 
 class WritePage extends StatefulWidget {
@@ -45,9 +53,13 @@ class _WritePageState extends State<WritePage> {
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.resolveWith(
                     (color) => Color(0xFF284463))),
+            
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
+              final form = _formKey.currentState;
+              if (form != null && form.validate()) {
+                form.save();
+                printFormValues();
+                //insertOnePost();
                 print('_store_name ' + _store_name + ' *****');
                 print('_pickup_spot ' + _pickup_spot + ' *****');
                 // print('_order_time' + _order_time);
@@ -91,7 +103,38 @@ class _WritePageState extends State<WritePage> {
       ),
     );
   }
+
+  void printFormValues() {
+    logger.i('가게 이름: $_store_name');
+    logger.i('받을 장소: $_pickup_spot');
+    logger.i('사람 수: $_member_count');
+    logger.i('배달의 민족 링크: $_order_link');
+    logger.i('카테고리: $_category');
+  }
+
+  // 디비에 저장하기
+  void insertOnePost() {
+    // final moviesRef = FirebaseFirestore.instance
+    //     .collection('together-e6cc2')
+    //     .withConverter<Movie>(
+    //   fromFirestore: (snapshots, _) => Movie.fromJson(snapshots.data()!),
+    //   toFirestore: (movie, _) => movie.toJson(),
+    // );
+  }
 }
+
+/*class WritingForm extends StatefulWidget {
+  const WritingForm({super.key});
+
+  @override
+  State<WritingForm> createState() => _WritingForm();
+}
+
+class _WritingForm extends State<WritingForm> {
+  @override
+  Widget build(BuildContext context) {
+    return Form(*/
+
 
 Widget WritingForm(context) => Form(
       key: _formKey,
@@ -103,6 +146,21 @@ Widget WritingForm(context) => Form(
               InputField("가게 이름", 0),
               InputField("받을 장소", 1),
               InputField("주문예정시각", 2),
+              DropdownButton(
+                value: _category,
+                icon: const Icon(Icons.arrow_downward),
+                onChanged: (String? value) {
+                  setState(() {
+                    _category = value!;
+                  });
+                },
+                items: category_menu.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              )
               InputField('카테고리', 3),
               InputField("모집 인원", 4),
               InputField("배달의 민족 함께주문 링크", 5),
@@ -113,6 +171,64 @@ Widget WritingForm(context) => Form(
         ),
       ),
     );
+  //}
+
+
+  /*Widget InputField(String text, int index) {
+    return TextFormField(
+      //autovalidateMode: AutovalidateMode.always,
+      onSaved: (value) {
+        if (index == 0)
+          _store_name = value as String;
+        else if (index == 1)
+          _pickup_spot = value as String;
+        else if (index == 2)
+          _member_count = int.parse(value!);
+        else if (index == 3)
+          _order_link = value as String;
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          if (index == 0) {
+            return '가게 이름을 입력하세요';
+          } else if (index == 1) {
+            return '받을 장소를 입력하세요';
+          } else if (index == 2) {
+            return '사람 수를 입력하세요';
+          } else if (index == 3) {
+            return '배달의 민족 함께주문 링크를 입력하세요';
+          }
+        }
+        return null;
+      },
+      // readOnly: (index == 1) ? true : false,
+      // initialValue: (index == 1)? FirebaseAuth.instance.currentUser!.email : null,
+      keyboardType: (index == 3) ? TextInputType.multiline : TextInputType.text,
+      // minLines: (index == 3) ? 40 : null,
+      // maxLines: (index == 3) ? 100 : null,
+      textInputAction: TextInputAction.next,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: text,
+        // helperText: text,
+        // labelText: text,
+        labelStyle: TextStyle(
+          fontSize: 12,
+        ),
+        //prefix: Text(text),
+      ),
+    );
+  }
+
+}*/
+
+class DeliveryPostDTO{
+  late String store_name;
+  late String pickup_spot;
+  late int member_count;
+  late String order_link;
+  late String category;
+}
 
 const List<String> list = <String>['디저트', '한식', '양식', '중식', '일식', '기타'];
 
