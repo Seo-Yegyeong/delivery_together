@@ -54,14 +54,6 @@ class _WritePageState extends State<WritePage> {
               if (form != null && form.validate()) {
                 form.save();
                 printFormValues();
-                //insertOnePost();
-                print('_store_name ' + _store_name + ' *****');
-                print('_pickup_spot ' + _pickup_spot + ' *****');
-                // print('_order_time' + _order_time);
-                print('_category ' + _category + ' *****');
-                print('_member_count ' + _member_count.toString());
-                print('_memo ' + _memo);
-                print('link ' + _order_link);
 
                 CollectionReference post = FirebaseFirestore.instance.collection('post');
                 CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
@@ -79,7 +71,7 @@ class _WritePageState extends State<WritePage> {
                   'createdTime': _current_time.toLocal(),
                   'state': 0,
                 });
-                print('===========test1==========');
+
                 QuerySnapshot querySnapshot = await post.get();
                 // test: print('doc id: ' + querySnapshot.docs.last.id);
                 postUser.add({
@@ -87,12 +79,6 @@ class _WritePageState extends State<WritePage> {
                   'memberId': user?.email,
                   'isWriter': true
                 });
-
-                print('===========test2==========');
-                print('postId: ' + querySnapshot.docs.last.id +
-                    'memberId: ' + user!.email.toString() +
-                    'isWriter: ' + true.toString()
-                );
               }
             },
           ),
@@ -108,16 +94,6 @@ class _WritePageState extends State<WritePage> {
     logger.i('배달의 민족 링크: $_order_link');
     logger.i('카테고리: $_category');
   }
-
-  // 디비에 저장하기
-  // void insertOnePost() {
-    // final moviesRef = FirebaseFirestore.instance
-    //     .collection('together-e6cc2')
-    //     .withConverter<Movie>(
-    //   fromFirestore: (snapshots, _) => Movie.fromJson(snapshots.data()!),
-    //   toFirestore: (movie, _) => movie.toJson(),
-    // );
-  // }
 }
 
 class WritingForm extends StatefulWidget {
@@ -148,7 +124,6 @@ class _WritingForm extends State<WritingForm> {
                   setState(() {
                     dropdownValue = value!;
                     _category = dropdownValue;
-                    print('============ my value: ' + dropdownValue + ".............");
                   });
                 },
                 items: category_menu.map<DropdownMenuItem<String>>((String value) {
