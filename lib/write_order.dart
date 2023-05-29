@@ -35,66 +35,69 @@ class _WritePageState extends State<WritePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: FixedAppBar(context),
-      body: Container(
-        decoration: BoxDecoration(color: Color(0xFF98A5B3)),
-        child: Column(
-          children: [TitleWidget(context, '글쓰기'), WritingForm(), SizedBox()],
+    return WillPopScope(
+      onWillPop: (){
+        return Future(()=>false);
+      },
+      child: Scaffold(
+        appBar: FixedAppBar(context),
+        body: Container(
+          decoration: BoxDecoration(color: Color(0xFF98A5B3)),
+          child: Column(
+            children: [TitleWidget(context, '글쓰기'), WritingForm(), SizedBox()],
+          ),
         ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: Color(0xFF98A5B3)),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: ElevatedButton(
-            child: Text('올리기'),
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith(
-                    (color) => Color(0xFF284463))),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(color: Color(0xFF98A5B3)),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: ElevatedButton(
+              child: Text('올리기'),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith(
+                      (color) => Color(0xFF284463))),
 
-            onPressed: () async {
-              final form = _formKey.currentState;
-              if (form != null && form.validate()) {
-                form.save();
-                printFormValues();
+              onPressed: () async {
+                final form = _formKey.currentState;
+                if (form != null && form.validate()) {
+                  form.save();
+                  printFormValues();
 
-                CollectionReference post = FirebaseFirestore.instance.collection('post');
-                CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
-                _current_time = DateTime.now(); //2023-05-29 18:04:45.425863
-                DateTime orderDateTime = DateFormat('yyyy-MM-dd hh:mm:ss').parse('${DateFormat('yyyy-MM-dd').format(_current_time)} $_order_time');
+                  CollectionReference post = FirebaseFirestore.instance.collection('post');
+                  CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
+                  _current_time = DateTime.now(); //2023-05-29 18:04:45.425863
+                  DateTime orderDateTime = DateFormat('yyyy-MM-dd hh:mm:ss').parse('${DateFormat('yyyy-MM-dd').format(_current_time)} $_order_time');
 
-                print('in 올리기 버튼 - _current_time : ' + _current_time.toString());
-                print('in 올리기 버튼 - orderDateTime : ' + orderDateTime.toString());
+                  print('in 올리기 버튼 - _current_time : ' + _current_time.toString());
+                  print('in 올리기 버튼 - orderDateTime : ' + orderDateTime.toString());
 
-                // if (kDebugMode) {
-                //   print('ㅇ여기야 여기$orderDate');
-                // }
 
-                post.add({
-                  'storeName': _store_name,
-                  'pickupSpot': _pickup_spot,
-                  'category': _category,
-                  'memTotalCnt': _member_count,
-                  'memCurrentCnt': 0,
-                  'link': _order_link,
-                  'memo': _memo,
-                  'orderTime': orderDateTime.toLocal(),
-                  'createdTime': _current_time.toLocal(),
-                  'state': 0,
-                });
+                  QuerySnapshot querySnapshot = await post.get();
+                  var postID = querySnapshot.size.toString();
 
-                QuerySnapshot querySnapshot = await post.get();
-                // test: print('doc id: ' + querySnapshot.docs.last.id);
-                postUser.add({
-                  'postId': querySnapshot.docs.last.id,
-                  'memberId': user?.email,
-                  'isWriter': true
-                });
+                  post.doc(postID).set({
+                    'storeName': _store_name,
+                    'pickupSpot': _pickup_spot,
+                    'category': _category,
+                    'memTotalCnt': _member_count,
+                    'memCurrentCnt': 0,
+                    'link': _order_link,
+                    'memo': _memo,
+                    'orderTime': orderDateTime.toLocal(),
+                    'createdTime': _current_time.toLocal(),
+                    'state': 0,
+                  });
 
-                Get.to(()=>ListPage());
-              }
-            },
+                  postUser.add({
+                    'postId': postID,
+                    'memberId': user?.email,
+                    'isWriter': true
+                  });
+
+                  Get.to(()=>ListPage());
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -108,7 +111,6 @@ class _WritePageState extends State<WritePage> {
     logger.i('사람 수: $_member_count');
     logger.i('배달의 민족 링크: $_order_link');
     logger.i('카테고리: $_category');
-    logger.i('시간: ', _current_time);
   }
 }
 
