@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'size.dart';
 
 PreferredSizeWidget FixedAppBar(context) => AppBar(
+  backgroundColor: Color(0xFF284463),
   title: Center(
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
