@@ -1,7 +1,9 @@
+import 'package:delivery_together/utils/components.dart';
 import 'package:delivery_together/write_order.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+
 
 class ListPage extends StatefulWidget {
   const ListPage({Key? key}) : super(key: key);
@@ -16,28 +18,7 @@ class _ListPageState extends State<ListPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(0xFF284463),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 50,
-                width: 50,
-                child: Image.asset('assets/icon/cookie.png'),
-              ),
-              const SizedBox(width: 10),
-              const Text(
-                '같이 먹자',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
+        appBar: FixedAppBar(context),
         body: Container(
           decoration: const BoxDecoration(
             color: Color(0xFF98A5B3),
@@ -72,7 +53,7 @@ class _ListPageState extends State<ListPage> {
                         ),
                       ),
                       const Text(
-                        'List Page',
+                        '글목록',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
