@@ -1,4 +1,5 @@
 import 'package:delivery_together/DeliveryState.dart';
+import 'package:delivery_together/utils/components.dart';
 import 'package:delivery_together/utils/size.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,24 +20,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(height: 45, width: 45, child: Image.asset('assets/icon/cookie.png'),),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  '같이 먹자',
-                  style: TextStyle(fontSize: 30),
-                )
-              ],
-            ),
-          ),
-          toolbarHeight: getAppBarHeight(context),
-        ),
+        appBar: FixedAppBar(context),
         body: GridView.count(
           padding: const EdgeInsets.all(25),
           crossAxisSpacing: 25,

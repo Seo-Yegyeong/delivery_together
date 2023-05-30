@@ -254,9 +254,9 @@ class _WritingForm extends State<WritingForm> {
                     return '배달의 민족 함께주문 링크를 입력하세요';
                   }
                 }
-                if (index == 4 && value != int){
-                  return '숫자를 입력하세요';
-                }
+                //if (index == 4){
+                //  return '숫자를 입력하세요';
+                //}
 
                 return null;
               },
