@@ -22,7 +22,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
           ),
           child: Column(
             children: [
-              TitleWidget(context, 'Delivery State Page'),
+              TitleWidget(context, 'Delivery State Page', TitleWidget(context, '배달 현황', 1)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(

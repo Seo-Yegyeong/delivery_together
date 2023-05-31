@@ -40,7 +40,7 @@ class _WritePageState extends State<WritePage> {
       body: Container(
         decoration: BoxDecoration(color: Color(0xFF98A5B3)),
         child: Column(
-          children: [TitleWidget(context, '글쓰기'), WritingForm(), SizedBox()],
+          children: [TitleWidget(context, '글쓰기', 0), WritingForm(), SizedBox()],
         ),
       ),
       bottomNavigationBar: Container(

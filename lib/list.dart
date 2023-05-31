@@ -82,69 +82,7 @@ class _ListPageState extends State<ListPage> {
           ),
           child: Column(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF67727D),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          width: 52,
-                          height: 30,
-                          child: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        '글목록',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Write button action
-                        },
-                        child: Container(
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF284463),
-                            borderRadius: BorderRadius.circular(26),
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.to(() => WritePage());
-                            },
-                            child: Center(
-                              child: Image.asset(
-                                'assets/icon/write.png',
-                                width: 42,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              TitleWidget(context, '글목록', 1),
               Expanded(
                 child: Scrollbar(
                 child: ListView.builder(

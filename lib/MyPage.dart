@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
-  final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+  final ButtonStyle ElevatedButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: const Color(0xFF284463),
     minimumSize: const Size(100, 70),
     shape: const RoundedRectangleBorder(
@@ -56,41 +56,38 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
 
       appBar:  FixedAppBar(context),
-      body: Container(
-
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            TitleWidget(context, 'My page'),
-            Container(
-                margin: const EdgeInsets.symmetric(
-                    vertical: 100,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          TitleWidget(context, 'My page', 0),
+          Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: 100,
+                horizontal: 20
+              ),
+              child: ElevatedButton(
+                style: ElevatedButtonStyle,
+                onPressed: () {
+                  Get.to(() => MyInfo());
+                },
+                child: const Text("내 정보",style: TextStyle(fontSize: 18)),
+              )
+          ),
+          Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10,
                   horizontal: 20
-                ),
-                child: ElevatedButton(
-                  style: raisedButtonStyle,
-                  onPressed: () {
-                    Get.to(() => MyInfo());
-                  },
-                  child: const Text("내 정보",style: TextStyle(fontSize: 18)),
-                )
-            ),
-            Container(
-                margin: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 20
-                ),
-                child: ElevatedButton(
-                  style: raisedButtonStyle,
-                  onPressed: () {
-                    Get.to(() => MyInfo());
-                  },
-                  child: const Text("주문 기록",style: TextStyle(fontSize: 18)),
-                )
-            ),
-          ],
-        ),
+              ),
+              child: ElevatedButton(
+                style: ElevatedButtonStyle,
+                onPressed: () {
+                  Get.to(() => MyInfo());
+                },
+                child: const Text("주문 기록",style: TextStyle(fontSize: 18)),
+              )
+          ),
+        ],
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
