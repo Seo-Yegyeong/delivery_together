@@ -1,5 +1,7 @@
+import 'package:delivery_together/utils/components.dart';
 import 'package:flutter/material.dart';
-import 'utils/size.dart';
+import 'package:get/get.dart';
+import 'DeliveryState.dart';
 
 class ListDetailPage extends StatefulWidget {
   @override
@@ -39,48 +41,11 @@ class _MyPageState extends State<ListDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.cookie),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                '같이 먹자',
-                style: TextStyle(fontSize: 30),
-              )
-            ],
-          ),
-        ),
-        toolbarHeight: getAppBarHeight(context),
-      ),
+      appBar: FixedAppBar(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              color: Color.fromARGB(255, 81, 99, 113),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  const Text(
-                    '땅땅치킨 양덕 1호점',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            TitleWidget(context, 'store name', 0),
             Container(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -133,31 +98,39 @@ class _MyPageState extends State<ListDetailPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 180.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return alertDialog;
-                        },
-                      );
-                    },
-                    child: Text('참여하기'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 81, 99, 113),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+            color: Color(0xFF284463), //Color(0xFF98A5B3)
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: ElevatedButton(
+            child: Text('참여하기'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF67727D), //Color.fromARGB(255, 81, 99, 113), //Color(0xFF284463),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 16.0,
+              ),
+            ),
+            onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return alertDialog;
+                },
+              );
+              Get.to(()=>DeliveryStatePage());
+            }
+          ),
         ),
       ),
     );
