@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:delivery_together/utils/components.dart';
-import 'package:delivery_together/write_order.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:intl/intl.dart';
+
+import 'list_detail.dart';
 
 
 class ListPage extends StatefulWidget {
@@ -90,81 +90,86 @@ class _ListPageState extends State<ListPage> {
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, index) {
                     Post post = postList[index];
-                    return Container(
-                      width: double.infinity,
-                      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      padding: EdgeInsets.fromLTRB(8,10,8,10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF284463),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(post.storeName,
-                            style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.white,
+                    return GestureDetector(
+                      onTap: (){
+                        Get.to(()=>ListDetailPage());
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                        padding: EdgeInsets.fromLTRB(8,10,8,10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF284463),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(post.storeName,
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: 130,
-                                height: 40,
-                                margin: EdgeInsets.only(top: 10),
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: 130,
+                                  height: 40,
+                                  margin: EdgeInsets.only(top: 10),
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child:Text(post.pickupSpot,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,),
+                                  ),
                                 ),
-                                alignment: Alignment.center,
-                                child:Text(post.pickupSpot,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black,),
+                                Container(
+                                  width: 90,
+                                  height: 40,
+                                  margin: EdgeInsets.only(top: 10),
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    '${post.memCurrentCnt.toString()}/${post.memTotalCnt.toString()}',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      backgroundColor: Colors.white,
+                                      fontSize: 20,
+                                      color: Colors.black,),
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                width: 90,
-                                height: 40,
-                                margin: EdgeInsets.only(top: 10),
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
+                                Container(
+                                  width: 130,
+                                  height: 40,
+                                  margin: EdgeInsets.only(top: 10),
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(post.orderTime,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      backgroundColor: Colors.white,
+                                      fontSize: 20,
+                                      color: Colors.black,),
+                                  ),
                                 ),
-                                child: Text(
-                                  '${post.memCurrentCnt.toString()}/${post.memTotalCnt.toString()}',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    backgroundColor: Colors.white,
-                                    fontSize: 20,
-                                    color: Colors.black,),
-                                ),
-                              ),
-                              Container(
-                                width: 130,
-                                height: 40,
-                                margin: EdgeInsets.only(top: 10),
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(post.orderTime,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    backgroundColor: Colors.white,
-                                    fontSize: 20,
-                                    color: Colors.black,),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
