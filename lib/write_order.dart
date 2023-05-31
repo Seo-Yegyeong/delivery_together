@@ -223,7 +223,7 @@ class _WritingForm extends State<WritingForm> {
             height: (index == 6)? 200: 60,
             padding: EdgeInsets.symmetric(horizontal: 11),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.amber,
               borderRadius: BorderRadius.circular(15),
             ),
             child: TextFormField(
@@ -254,9 +254,10 @@ class _WritingForm extends State<WritingForm> {
                     return '배달의 민족 함께주문 링크를 입력하세요';
                   }
                 }
-                //if (index == 4){
-                //  return '숫자를 입력하세요';
-                //}
+
+                if(index == 4 && int.tryParse(value!) == null){
+                  return '숫자를 입력하세요';
+                }
 
                 return null;
               },
@@ -269,6 +270,7 @@ class _WritingForm extends State<WritingForm> {
               autofocus: true,
               decoration: const InputDecoration(
                 border: InputBorder.none,
+
               ),
               style: TextStyle(
                 fontSize: 30,
