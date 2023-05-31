@@ -139,9 +139,9 @@ class _WritingForm extends State<WritingForm> {
                 InputField("받을 장소", 1),
                 Text('주문 예정 시각', style: TextStyle(color: Colors.white, fontSize: 20),),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10.0),
                   child: Container(
-                    height: 60,
+                    height: 65,
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -173,9 +173,9 @@ class _WritingForm extends State<WritingForm> {
                 ),
                 Text('카테고리', style: TextStyle(color: Colors.white, fontSize: 20),),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.fromLTRB(0,0,0,15.0),
                   child: Container(
-                    height: 60,
+                    height: 65,
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -220,10 +220,10 @@ class _WritingForm extends State<WritingForm> {
         children: [
           Text(text, style: TextStyle(color: Colors.white, fontSize: 20),),
           Container(
-            height: (index == 6)? 200: 60,
+            height: (index == 6)? 200: 65,
             padding: EdgeInsets.symmetric(horizontal: 11),
             decoration: BoxDecoration(
-              color: Colors.amber,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(15),
             ),
             child: TextFormField(
@@ -251,7 +251,7 @@ class _WritingForm extends State<WritingForm> {
                   } else if (index == 4) {
                     return '모집 인원수를 입력하세요';
                   } else if (index == 5) {
-                    return '배달의 민족 함께주문 링크를 입력하세요';
+                    return '함께주문 링크를 입력하세요';
                   }
                 }
 
@@ -263,23 +263,36 @@ class _WritingForm extends State<WritingForm> {
               },
               // readOnly: (index == 1) ? true : false,
               // initialValue: (index == 1)? FirebaseAuth.instance.currentUser!.email : null,
-              keyboardType: (index == 6) ? TextInputType.multiline : TextInputType.text,
+              keyboardType: _getKeyboardType(index),
               minLines: (index == 6) ? 10 : null,
               maxLines: (index == 6) ? 30 : null,
               textInputAction: TextInputAction.next,
               autofocus: true,
               decoration: const InputDecoration(
                 border: InputBorder.none,
+                errorStyle: TextStyle(fontSize: 13, height: 0.2),
 
               ),
+              // strutStyle: StrutStyle(height: 1.5),
               style: TextStyle(
                 fontSize: 30,
               ),
             ),
           ),
-          SizedBox(height: 10,)
+          SizedBox(height: 15,)
         ],
       ),
     );
+  }
+
+  TextInputType _getKeyboardType(int value) {
+    switch (value) {
+      case 6:
+        return TextInputType.multiline;
+      case 4:
+        return TextInputType.number;
+      default:
+        return TextInputType.text;
+    }
   }
 }
