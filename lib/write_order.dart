@@ -46,13 +46,18 @@ class _WritePageState extends State<WritePage> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(color: Color(0xFF98A5B3)),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: ElevatedButton(
             child: Text('올리기'),
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith(
-                    (color) => Color(0xFF284463))),
-
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF284463),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          padding: const EdgeInsets.symmetric(
+            vertical: 16.0,
+          ),
+        ),
             onPressed: () async {
               final form = _formKey.currentState;
               if (form != null && form.validate()) {
