@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 import 'MyPage.dart';
 import 'list.dart';
-
+//이 페이지 이제 사용 안합니다...
 class MyOrderPage extends StatefulWidget {
   const MyOrderPage({Key? key}) : super(key: key);
 
