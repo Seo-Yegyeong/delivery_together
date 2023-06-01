@@ -64,12 +64,15 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
 
 
   Future<bool> checkWriterState() async {
-    QuerySnapshot querySnapshot = await _firestore.collection('post-user').where('memberId', isEqualTo: user?.email).get();
+    //DocumentSnapshot firstDoc;
 
-    if (querySnapshot.docs.isNotEmpty) {
-      isWriter = querySnapshot.docs.first.get('isWriter');
+    QuerySnapshot myPost = await FirebaseFirestore.instance.collection('user').doc(user?.uid).collection('postList').get();
+    if (myPost.docs.isNotEmpty) {
+      isWriter = myPost.docs.first.get('isWriter');
       updateWriterState(isWriter);
     }
+    // QuerySnapshot querySnapshot = await _firestore.collection('post').doc('${widget.post.postID}').collection('userList');
+    // QuerySnapshot querySnapshot = await _firestore.collection('post-user').where('memberId', isEqualTo: user?.email).get();
 
     return isWriter;
   }
@@ -201,15 +204,14 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         isWriter
             ? Container()
             : GestureDetector(
-        onTap: () {
-      if (currentSlide == imageList.length - 1) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-          return AlertDialog(
-              title: Text('Delivery Complete!'),
-    content: Text('The delivery has been completed successfully!',
-    ),
+          onTap: () {
+          if (currentSlide == imageList.length - 1) {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Delivery Complete!'),
+                content: Text('The delivery has been completed successfully!'),
             actions: [
               TextButton(
                 onPressed: (){
@@ -225,8 +227,11 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
             },
         );
       } else {
-        updateSlideState((currentSlide + 1) % imageList.length);
-      }
+            setState(() {
+              currentSlide = (currentSlide + 1) % imageList.length;
+              _controller.jumpToPage(currentSlide);
+            });
+          }
         },
           child: Container(
             width: 40,
