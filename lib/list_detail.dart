@@ -6,6 +6,7 @@ import 'package:delivery_together/list.dart';
 import 'package:delivery_together/utils/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'DeliveryState.dart';
 
@@ -30,24 +31,25 @@ class _ListDetailPageState extends State<ListDetailPage> {
   void initState() {
     super.initState();
 
-    // isParticipating = false;
-    Stream<QuerySnapshot<Map<String, dynamic>>> myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList').snapshots();
-    Stream<List<DocumentSnapshot<Map<String, dynamic>>>> expandedStream = myUserList.asyncExpand((QuerySnapshot<Map<String, dynamic>> querySnapshot) async* {
-      yield querySnapshot.docs;
-    });
-    expandedStream.listen((List<DocumentSnapshot<Map<String, dynamic>>> documentList) {
-      // 확장된 스트림에서 방출된 문서 목록에 대한 작업 수행
-      for (DocumentSnapshot<Map<String, dynamic>> documentSnapshot in documentList) {
-        Map<String, dynamic>? data = documentSnapshot.data();
-        // dynamic value = data!['userID'];
-        // print(data!['userID'])
-        if(data!['userID'] == user!.uid) {
-          isParticipating = true;
+    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+      isParticipating = false;
+      Stream<QuerySnapshot<Map<String, dynamic>>> myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList').snapshots();
+      Stream<List<DocumentSnapshot<Map<String, dynamic>>>> expandedStream = myUserList.asyncExpand((QuerySnapshot<Map<String, dynamic>> querySnapshot) async* {
+        yield querySnapshot.docs;
+      });
+      expandedStream.listen((List<DocumentSnapshot<Map<String, dynamic>>> documentList) {
+        for (DocumentSnapshot<Map<String, dynamic>> documentSnapshot in documentList) {
+          Map<String, dynamic>? data = documentSnapshot.data();
+          if('${data!['userID']}' == '${user!.uid}') {
+            isParticipating = true;
+            print('성공~');
+          }
+          print('나는 ' + user!.uid);
+          print('지금 데이터는 ' + data!['userID']);
+          print('여기야 여기!!!' + isParticipating.toString());
         }
-        print('나는 ' + user!.uid);
-        print('지금 데이터는 ' + data!['userID']);
-        print('여기야 여기!!!' + isParticipating.toString());
-      }
+      });
+      print('바깥이야 여기!!!' + isParticipating.toString());
     });
   }
 
@@ -125,6 +127,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            Container(child: ElevatedButton(child: Text('click!'), onPressed: (){print(isParticipating);},),),
             TitleWidget(context, '${widget.post.storeName}', 0),
             Container(
               padding: const EdgeInsets.all(16.0),
@@ -151,7 +154,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         myText('주문 시간'),
                         SizedBox(height: 8.0),
                         Text('${widget.post.orderTime}'),
-                        //(AmIpaticipating(myUserList)==true)? Text('내가 적었엉!!', style: TextStyle(fontSize: 30),): Text('내가 안 적었엉!!!', style: TextStyle(fontSize: 30),),
+                        (isParticipating==true)? Text('내가 적었엉!!', style: TextStyle(fontSize: 30),): Text('내가 안 적었엉!!!', style: TextStyle(fontSize: 30),),
                       ],
                     ),
                   ),
