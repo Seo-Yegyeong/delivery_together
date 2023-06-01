@@ -18,10 +18,9 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
   int currentSlide = 0;
 
   List<String> imageList = [
-    "assets/icon/cookie.png",
-    "assets/icon/info.png",
-    "assets/icon/status.png",
-    "assets/icon/write.png"
+    "assets/icon/startOrder.png",
+    "assets/icon/startDelivery.png",
+    "assets/icon/completedDelivery.png",
   ];
 
   @override
@@ -82,7 +81,23 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
     return snapshot.get('currentSlide') ?? 0;
   }
 
+  Future<String> getStoreNameFromPost() async {
+    DocumentSnapshot postUserDoc =
+    await _firestore.collection('post-user').doc(user?.uid).get();
 
+    if (postUserDoc.exists) {
+      String postId = postUserDoc.get('post-id');
+
+      DocumentSnapshot postDoc =
+      await _firestore.collection('post').doc(postId).get();
+
+      if (postDoc.exists) {
+        return postDoc.get('storeName');
+      }
+    }
+
+    return '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -246,32 +261,30 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                   );
                 }).toList(),
               ),
-              // Rest of your page content
+              Container(
+                margin: EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(10.0),
+                width: double.infinity,
+                height: 100.0,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: FutureBuilder<String>(
+                  future: getStoreNameFromPost(),
+                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return Text('Store Name: ${snapshot.data}');
+                    }
+                  },
+                ),
+              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class ListElement extends StatelessWidget {
-  final String text;
-
-  const ListElement({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(3),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: Colors.black,
         ),
       ),
     );
