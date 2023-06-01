@@ -75,6 +75,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         print(memCurrentCnt);
         DateTime orderTime = docSnapshot.get('orderTime').toDate();
         print(orderTime);
+        String memo = docSnapshot.get('memo');
         int remainingMinutes = calculateRemainingTime(orderTime);
         String orderTimeString =
         remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString()+'분 후';
@@ -92,6 +93,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
           orderTime: date,
           createdTime: createdTime,
           isWriter: true, postID: postID,
+          memo: memo,
         );
 
       }

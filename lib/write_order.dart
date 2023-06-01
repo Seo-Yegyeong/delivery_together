@@ -82,7 +82,7 @@ class _WritePageState extends State<WritePage> {
                   'pickupSpot': _pickup_spot,
                   'category': _category,
                   'memTotalCnt': _member_count,
-                  'memCurrentCnt': 0,
+                  'memCurrentCnt': 1,
                   'link': _order_link,
                   'memo': _memo,
                   'orderTime': orderDateTime,

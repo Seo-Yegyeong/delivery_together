@@ -62,7 +62,6 @@ class _ListDetailPageState extends State<ListDetailPage> {
   @override
   Widget build(BuildContext context) {
     // Future<QuerySnapshot<Map<String, dynamic>>> myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList').get();
-    // static get widget.post => post;
 
     return Scaffold(
       appBar: FixedAppBar(context),
@@ -154,23 +153,14 @@ class _ListDetailPageState extends State<ListDetailPage> {
               content: Text('참여되었습니다'),
             ),
           );
-          // int? num = int.tryParse(widget.post.memCurrentCnt);
-          // if (widget.post.memTotalCnt >= widget.post.memCurrentCnt + 1 ) {
-          //   PostCollection.doc(widget.post.postID).set({
-          //     'postID': postID,
-          //     'storeName': _store_name,
-          //     'pickupSpot': _pickup_spot,
-          //     'category': _category,
-          //     'memTotalCnt': _member_count,
-          //     'memCurrentCnt': num+1,
-          //     'link': _order_link,
-          //     'memo': _memo,
-          //     'orderTime': orderDateTime,
-          //     'createdTime': _current_time,
-          //     'state': 0,
-          //     'memCurrentCnt': num+1,
-          //   });
-          // }
+          DocumentReference<Object?> currentPost = PostCollection.doc(widget.post.postID);
+          int num = widget.post.memCurrentCnt;
+
+          if (widget.post.memTotalCnt >= widget.post.memCurrentCnt + 1 ) {
+            currentPost.update({
+              'memCurrentCnt': num+1,
+            }).then((value){print('successful!');}).catchError((error){print('Failed to update document');});
+          }
           PostCollection.doc(widget.post.postID).collection('userList').doc(user!.uid).set({
             'isWriter': false,
             'userID': user!.uid,
