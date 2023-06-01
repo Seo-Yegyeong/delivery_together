@@ -16,6 +16,7 @@ class MyOrderPage extends StatefulWidget {
   @override
   State<MyOrderPage> createState() => _MyOrderPage();
 }
+
 class User{
   String email;
   String name;
@@ -23,18 +24,6 @@ class User{
     required this.email,
     required this.name
   });
-}
-
-class PostUser{
-  String memberId;
-  String postId;
-  bool isWriter;
-
-  PostUser({
-    required this.memberId,
-    required this.isWriter,
-    required this.postId
-});
 }
 
 class Post {
@@ -66,74 +55,67 @@ class _MyOrderPage extends State<MyOrderPage> {
     fetchData();
     print(postList);
   }
-
   Future<void> fetchData() async {
-    print("userAuth: ");
-    print(userAuth);
+    // 1. 현재 사용자의 uid 가져오기
+    String uid = userAuth!.uid;
 
-    String? userEmail = Provider.of<UserProvider>(context, listen: false).email;
-    print(userEmail);
-    if (userEmail != null) {
-      print("된다!");
-      firestore.QuerySnapshot userSnapshot = await firestore.FirebaseFirestore.instance
+    // 2. user 컬렉션에서 현재 사용자의 문서 가져오기
+    firestore.DocumentSnapshot userSnapshot = await firestore.FirebaseFirestore.instance
+        .collection('user')
+        .doc(uid)
+        .get();
+    print(uid);
+
+    if (userSnapshot.exists) {
+      // 3. postList 컬렉션 가져오기
+      firestore.QuerySnapshot postListSnapshot = await firestore.FirebaseFirestore.instance
           .collection('user')
-          .where('email', isEqualTo: userEmail)
+          .doc(uid)
+          .collection('postList')
           .get();
 
+      List<String> postIds = [];
+      postListSnapshot.docs.forEach((doc) {
+        // postList 컬렉션의 문서들에서 postIds 가져오기
+        String postId = doc.id;
+        postIds.add(postId);
+      });
 
-      if (userSnapshot.docs.isNotEmpty) {
-        String userId = userEmail;
-
-        // 3. post-user 컬렉션에서 해당 이메일과 일치하는 문서 조회
-        firestore.QuerySnapshot postUserSnapshot = await firestore.FirebaseFirestore.instance
-            .collection('post-user')
-            .where('memberId', isEqualTo: userId)
+      List<Post> tempList = [];
+      for (String postId in postIds) {
+        // 4. post 컬렉션에서 postId에 해당하는 문서 가져오기
+        firestore.DocumentSnapshot postSnapshot = await firestore.FirebaseFirestore.instance
+            .collection('post')
+            .doc(postId)
             .get();
 
-
-        List<String> postIds = [];
-        postUserSnapshot.docs.forEach((doc) {
-          String postId = doc['postId'];
-          postIds.add(postId);
-          print(postId);
-        });
-
-        List<Post> tempList = [];
-        for (String postId in postIds) {
-          // 4. post 컬렉션에서 postId에 해당하는 문서 조회
-          firestore.DocumentSnapshot postSnapshot = await firestore.FirebaseFirestore.instance
-              .collection('post')
-              .doc(postId)
-              .get();
-
-          if (postSnapshot.exists) {
-            String storeName = postSnapshot['storeName'];
-            String pickupSpot = postSnapshot['pickupSpot'];
-            int memTotalCnt = postSnapshot['memTotalCnt'];
-            int memCurrentCnt = postSnapshot['memCurrentCnt'];
-            DateTime orderTime = postSnapshot['orderTime'].toDate();
-            DateTime createdTime = postSnapshot['createdTime'].toDate();
-            int remainingMinutes = calculateRemainingTime(orderTime);
-            String orderTimeString = remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString() + '분 후';
-            Post post = Post(
-              storeName: storeName,
-              pickupSpot: pickupSpot,
-              memTotalCnt: memTotalCnt,
-              memCurrentCnt: memCurrentCnt,
-              orderTime: orderTimeString,
-              createdTime: createdTime,
-            );
-            tempList.add(post);
-          }
+        if (postSnapshot.exists) {
+          String storeName = postSnapshot['storeName'];
+          String pickupSpot = postSnapshot['pickupSpot'];
+          int memTotalCnt = postSnapshot['memTotalCnt'];
+          int memCurrentCnt = postSnapshot['memCurrentCnt'];
+          DateTime orderTime = postSnapshot['orderTime'].toDate();
+          DateTime createdTime = postSnapshot['createdTime'].toDate();
+          int remainingMinutes = calculateRemainingTime(orderTime);
+          String orderTimeString = remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString() + '분 후';
+          Post post = Post(
+            storeName: storeName,
+            pickupSpot: pickupSpot,
+            memTotalCnt: memTotalCnt,
+            memCurrentCnt: memCurrentCnt,
+            orderTime: orderTimeString,
+            createdTime: createdTime,
+          );
+          tempList.add(post);
         }
-
-        tempList.sort((a, b) => b.createdTime.compareTo(a.createdTime));
-        setState(() {
-          postList = tempList;
-        });
       }
+
+      setState(() {
+        postList = tempList;
+      });
     }
   }
+
 
 
   Widget build(BuildContext context) {
