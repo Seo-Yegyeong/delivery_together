@@ -33,6 +33,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                 content: Text('참여되었습니다'),
               ),
             );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryStatePage()));
           },
           child: const Text('네'),
         ),
@@ -69,22 +70,13 @@ class _ListDetailPageState extends State<ListDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '[ID]',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text('한동이'),
-                        SizedBox(height: 16.0),
-                        Text(
                           '[장소]',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(height: 8.0),
-                        Text('야외공연장'),
+                        Text('${widget.post.pickupSpot}'),
                         SizedBox(height: 16.0),
                         Text(
                           '[모집 인원]',
@@ -93,7 +85,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                           ),
                         ),
                         SizedBox(height: 8.0),
-                        Text('2/4'),
+                        Text('${widget.post.memCurrentCnt}/${widget.post.memTotalCnt}',),
                         SizedBox(height: 16.0),
                         Text(
                           '[주문 시간]',
@@ -102,7 +94,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                           ),
                         ),
                         SizedBox(height: 8.0),
-                        Text('12:45 PM'),
+                        Text('${widget.post.orderTime}'),
                       ],
                     ),
                   ),
@@ -136,7 +128,6 @@ class _ListDetailPageState extends State<ListDetailPage> {
                   return alertDialog;
                 },
               );
-              Get.to(()=>DeliveryStatePage());
             }
           ),
         ),
