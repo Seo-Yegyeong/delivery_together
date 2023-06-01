@@ -31,6 +31,7 @@ Widget TitleWidget(context, title, type) => Column(
     Container(
       decoration: BoxDecoration(
         color: const Color(0xFF67727D),
+
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -49,7 +50,7 @@ Widget TitleWidget(context, title, type) => Column(
                 width: 52,
                 height: 30,
                 child: const Icon(
-                  Icons.arrow_back,
+                  Icons.home,
                   color: Colors.white,
                   size: 25,
                 ),
