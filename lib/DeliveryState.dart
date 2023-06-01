@@ -1,3 +1,4 @@
+import 'package:delivery_together/utils/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -104,28 +105,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
     print("Current User Email: ${user?.email}");
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(0xFF284463),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 50,
-                width: 50,
-                child: Image.asset('assets/icon/cookie.png'),
-              ),
-              const SizedBox(width: 10),
-              const Text(
-                '같이 먹자',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
+        appBar: FixedAppBar(context),
         body: Container(
           decoration: const BoxDecoration(
             color: Color(0xFF98A5B3),
