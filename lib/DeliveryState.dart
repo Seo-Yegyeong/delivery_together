@@ -7,7 +7,7 @@ import 'list.dart';
 
 class DeliveryStatePage extends StatefulWidget {
   // final Post post;
-  const DeliveryStatePage({Key? key,
+  const DeliveryStatePage({Key? key, required Type postID,
     // required this.post
   }) : super(key: key);
 
@@ -17,6 +17,7 @@ class DeliveryStatePage extends StatefulWidget {
 
 class _DeliveryStatePageState extends State<DeliveryStatePage> {
   User? user;
+  late List<String> enteredRooms;
   CarouselController _controller = CarouselController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool isWriter = false;
@@ -34,7 +35,67 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
     user = FirebaseAuth.instance.currentUser;
     checkWriterState().then((value) => setState(() => isWriter = value));
     getSlideState().then((value) => currentSlide = value);
+    getEnteredRooms().then((value) {
+      print("enteredRoom입니다.");
+      setState(() {
+        print(value);
+        enteredRooms = value;
+      });
+    });
+    print("user입니다.");
+    print(user);
   }
+
+
+  Future<List<String>> getEnteredRooms() async {
+    List<String> enteredRooms = [];
+
+    QuerySnapshot postSnapshot = await FirebaseFirestore.instance
+        .collection('post')
+        .get();
+
+    for (QueryDocumentSnapshot docSnapshot in postSnapshot.docs) {
+      String postId = docSnapshot.id;
+
+      QuerySnapshot userListSnapshot = await docSnapshot.reference
+          .collection('userList')
+          .where('userID', isEqualTo: user?.uid)
+          .get();
+
+
+      if (userListSnapshot.docs.isNotEmpty) {
+        enteredRooms.add(postId);
+      }
+    }
+
+    return enteredRooms;
+  }
+
+
+  Future<String?> getNearestStoreName() async {
+    QuerySnapshot postSnapshot = await FirebaseFirestore.instance
+        .collection('post')
+        .where('postID', whereIn: enteredRooms)
+        .get();
+
+    String? nearestStoreName;
+    DateTime currentTime = DateTime.now();
+
+    int minDifference = 99999999; // 초기값으로 매우 큰 값 설정
+
+    for (QueryDocumentSnapshot docSnapshot in postSnapshot.docs) {
+      DateTime orderTime = docSnapshot.get('orderTime').toDate();
+      int difference = orderTime.difference(currentTime).inSeconds.abs();
+
+      if (difference < minDifference) {
+        minDifference = difference;
+        nearestStoreName = docSnapshot.get('storeName');
+      }
+    }
+
+    return nearestStoreName;
+  }
+
 
   void updateWriterState(bool writerState) async {
     await _firestore
@@ -262,11 +323,33 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(
-                        'hello~~!~!~!~!'
-                      // '${widget.post.storeName}'
+                    child: FutureBuilder<String?>(
+                      future: getNearestStoreName(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasData) {
+                          return Text(snapshot.data ?? '');
+                        } else {
+                          return Text('No nearest store found');
+                        }
+                      },
                     ),
                   ),
+                  // Container(
+                  //   margin: EdgeInsets.all(10.0),
+                  //   padding: EdgeInsets.all(10.0),
+                  //   width: double.infinity,
+                  //   height: 100.0,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius: BorderRadius.circular(10),
+                  //   ),
+                  //   child: Text(
+                  //       'hello~~!~!~!~!'
+                  //     // ${widget.post.storeName}
+                  //   ),
+                  // ),
                 ],
             ),
           ),

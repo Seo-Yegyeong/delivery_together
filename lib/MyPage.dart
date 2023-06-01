@@ -62,7 +62,7 @@ class User{
   });
 }
 
-class Post {
+class MyPost {
   String storeName;
   String pickupSpot;
   int memTotalCnt;
@@ -70,7 +70,7 @@ class Post {
   String orderTime;
   DateTime createdTime;
 
-  Post({
+  MyPost({
     required this.storeName,
     required this.pickupSpot,
     required this.memTotalCnt,
@@ -82,7 +82,7 @@ class Post {
 
 class _MyHomePageState extends State<MyHomePage> {
   final userAuth = FirebaseAuth.instance.currentUser;
-  List<Post> postList = [];
+  List<MyPost> postList = [];
   @override
   void initState() {
     super.initState();
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
         postIds.add(postId);
       });
 
-      List<Post> tempList = [];
+      List<MyPost> tempList = [];
       for (String postId in postIds) {
         // 4. post 컬렉션에서 postId에 해당하는 문서 가져오기
         firestore.DocumentSnapshot postSnapshot = await firestore.FirebaseFirestore.instance
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
           DateTime createdTime = postSnapshot['createdTime'].toDate();
           int remainingMinutes = calculateRemainingTime(orderTime);
           String orderTimeString = remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString() + '분 후';
-          Post post = Post(
+          MyPost post = MyPost(
             storeName: storeName,
             pickupSpot: pickupSpot,
             memTotalCnt: memTotalCnt,
@@ -211,7 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemCount: postList.length,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, index) {
-                  Post post = postList[index];
+                  MyPost post = postList[index];
                   return GestureDetector(
                     onTap: (){
                       // Get.to(()=>ListDetailPage(post: post));
