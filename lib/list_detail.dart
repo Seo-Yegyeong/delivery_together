@@ -25,7 +25,10 @@ bool isParticipating = false;
 
 class _ListDetailPageState extends State<ListDetailPage> {
   final user = FirebaseAuth.instance.currentUser;
-
+  // static List<Widget> _testText = <Widget>[Text('나 이미 참여 중이양!', style: TextStyle(fontSize: 30),), Text('나 아직 참여 안 했옹!!', style: TextStyle(fontSize: 30),)];
+  CollectionReference PostCollection = FirebaseFirestore.instance.collection('post');
+  CollectionReference UserCollection = FirebaseFirestore.instance.collection('user');
+  int index = 0;
 
   @override
   void initState() {
@@ -33,32 +36,39 @@ class _ListDetailPageState extends State<ListDetailPage> {
 
     SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
       isParticipating = false;
-      Stream<QuerySnapshot<Map<String, dynamic>>> myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList').snapshots();
+      Stream<QuerySnapshot<Map<String, dynamic>>> myUserList = PostCollection.doc('${widget.post.postID}').collection('userList').snapshots();
       Stream<List<DocumentSnapshot<Map<String, dynamic>>>> expandedStream = myUserList.asyncExpand((QuerySnapshot<Map<String, dynamic>> querySnapshot) async* {
         yield querySnapshot.docs;
       });
       expandedStream.listen((List<DocumentSnapshot<Map<String, dynamic>>> documentList) {
         for (DocumentSnapshot<Map<String, dynamic>> documentSnapshot in documentList) {
           Map<String, dynamic>? data = documentSnapshot.data();
-          if('${data!['userID']}' == '${user!.uid}') {
+          if('${data!['userID']}' == user!.uid) {
             isParticipating = true;
             // print('성공~');
           }
         }
       });
     });
+
+    // setState(() {
+    //   if(isParticipating == true)
+    //     index = 0;
+    //   else
+    //     index = 1;
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
     // Future<QuerySnapshot<Map<String, dynamic>>> myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList').get();
+    // static get widget.post => post;
 
     return Scaffold(
       appBar: FixedAppBar(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(child: ElevatedButton(child: Text('click!'), onPressed: (){print(isParticipating);},),),
             TitleWidget(context, '${widget.post.storeName}', 0),
             Container(
               padding: const EdgeInsets.all(16.0),
@@ -75,18 +85,23 @@ class _ListDetailPageState extends State<ListDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         myBoldText('장소'),
-                        SizedBox(height: 8.0),
+                        SizedBox(height: 5.0),
                         myLightText('${widget.post.pickupSpot}'),
                         SizedBox(height: 16.0),
                         myBoldText('모집 인원'),
-                        SizedBox(height: 8.0),
+                        SizedBox(height: 5.0),
                         myLightText('${widget.post.memCurrentCnt}/${widget.post.memTotalCnt}',),
                         SizedBox(height: 16.0),
                         myBoldText('주문 시간'),
-                        SizedBox(height: 8.0),
-                        myLightText('${widget.post.orderTime}'),
-                        SizedBox(height: 8.0),
-                        (isParticipating==true)? Text('내가 적었엉!!', style: TextStyle(fontSize: 30),): Text('내가 안 적었엉!!!', style: TextStyle(fontSize: 30),),
+                        SizedBox(height: 5.0),
+                        myLightText(widget.post.orderTime),
+                        SizedBox(height: 16.0),
+                        myBoldText('기타'),
+                        SizedBox(height: 5.0),
+                        myLightText(widget.post.memo),
+                        SizedBox(height: 16.0),
+                        (isParticipating == true)? Text('나 이미 참여 중이양!', style: TextStyle(fontSize: 30),): Text('나 아직 참여 안 했옹!!', style: TextStyle(fontSize: 30),)
+                        // _testText.elementAt(index)
                       ],
                     ),
                   ),
@@ -139,6 +154,31 @@ class _ListDetailPageState extends State<ListDetailPage> {
               content: Text('참여되었습니다'),
             ),
           );
+          // int? num = int.tryParse(widget.post.memCurrentCnt);
+          // if (widget.post.memTotalCnt >= widget.post.memCurrentCnt + 1 ) {
+          //   PostCollection.doc(widget.post.postID).set({
+          //     'postID': postID,
+          //     'storeName': _store_name,
+          //     'pickupSpot': _pickup_spot,
+          //     'category': _category,
+          //     'memTotalCnt': _member_count,
+          //     'memCurrentCnt': num+1,
+          //     'link': _order_link,
+          //     'memo': _memo,
+          //     'orderTime': orderDateTime,
+          //     'createdTime': _current_time,
+          //     'state': 0,
+          //     'memCurrentCnt': num+1,
+          //   });
+          // }
+          PostCollection.doc(widget.post.postID).collection('userList').doc(user!.uid).set({
+            'isWriter': false,
+            'userID': user!.uid,
+          });
+          UserCollection.doc(user!.uid).collection('postList').doc(widget.post.postID).set({
+            'isWriter': false,
+            'postID': widget.post.postID,
+          });
           Get.to(() => DeliveryStatePage(
               postID: PostID
           ));
@@ -154,8 +194,6 @@ class _ListDetailPageState extends State<ListDetailPage> {
     ],
   );
 
-
-
   Widget myBoldText(text) => Text(
     '${text}',
     style: TextStyle(
@@ -167,7 +205,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
   Widget myLightText(text) => Text(
     '${text}',
     style: TextStyle(
-      fontSize: 20,
+      fontSize: 23,
     ),
   );
 }
