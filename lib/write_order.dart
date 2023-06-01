@@ -68,7 +68,7 @@ class _WritePageState extends State<WritePage> {
                 CollectionReference myPostList = FirebaseFirestore.instance.collection('user').doc('${me?.uid}').collection('postList');
                 _current_time = DateTime.now(); //2023-05-29 18:04:45.425863
                 DateTime orderDateTime = DateFormat('yyyy-MM-dd hh:mm:ss').parse('${DateFormat('yyyy-MM-dd').format(_current_time)} $_order_time');
-
+                
                 print('in 올리기 버튼 - _current_time : ' + _current_time.toString());
                 print('in 올리기 버튼 - orderDateTime : ' + orderDateTime.toString());
 
@@ -165,7 +165,7 @@ class _WritingForm extends State<WritingForm> {
                         Text('$hours:$minutes', style: TextStyle(fontSize: 30)),
                         ElevatedButton(
                             onPressed: () async {
-                              TimeOfDay? newTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+                              TimeOfDay? newTime = await showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(minutes: 30))));
                               if(newTime == null) return;
                               setState(() {
                                 time = newTime;
@@ -268,6 +268,10 @@ class _WritingForm extends State<WritingForm> {
 
                 if(index == 4 && int.tryParse(value!) == null){
                   return '숫자를 입력하세요';
+                } 
+                
+                if (index == 4 && int.parse(value!) <= 0) {
+                  return '1명 이상 입력하세요';
                 }
 
                 return null;
