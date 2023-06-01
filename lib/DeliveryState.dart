@@ -145,8 +145,8 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
           items: imageList.map((imagePath) {
             return Builder(builder: (BuildContext context) {
               return Container(
-                width: double.infinity,
-                height: double.infinity,
+                width: 250,
+                height: 400,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20.0),
                   image: DecorationImage(
@@ -212,7 +212,12 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
     ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context, 'OK'),
+                onPressed: (){
+                  setState(() {
+
+                  });
+                  Navigator.pop(context, 'OK');
+                },
                 child: const Text('OK'),
               ),
             ],
@@ -224,15 +229,21 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
       }
         },
           child: Container(
-            width: 45,
+            width: 40,
             height: 40,
             decoration: BoxDecoration(
               color: const Color(0xFF284463),
-              borderRadius: BorderRadius.circular(26),
+              borderRadius: BorderRadius.circular(50),
             ),
             child: Center(
-              child: Image.asset(
-                'assets/icon/info.png',
+              child: ClipOval(
+                child: AspectRatio(
+                  aspectRatio: 1/1, // For square images
+                  child: Image.asset(
+                    'assets/icon/button.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
           ),
