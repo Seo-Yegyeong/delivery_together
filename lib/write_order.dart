@@ -91,12 +91,12 @@ class _WritePageState extends State<WritePage> {
                 });
 
                 CollectionReference myUserList = FirebaseFirestore.instance.collection('post').doc('${postID}').collection('userList');
-                myUserList.add({
-                  'UserID': me?.uid,
+                myUserList.doc(me?.uid).set({
+                  'userID': me?.uid,
                   'isWriter': true,
                 });
 
-                myPostList.add({
+                myPostList.doc(postID).set({
                   'postId': postID,
                   'isWriter': true
                 });
