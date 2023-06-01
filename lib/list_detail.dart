@@ -1,15 +1,23 @@
+import 'package:delivery_together/list.dart';
 import 'package:delivery_together/utils/components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'DeliveryState.dart';
 
+
 class ListDetailPage extends StatefulWidget {
+  Post post;
+  ListDetailPage({Key? key, required this.post
+    // required this.doc, required this.docID
+  }) : super(key: key);
+
   @override
-  _MyPageState createState() => _MyPageState();
+  State<ListDetailPage> createState() => _ListDetailPageState();
 }
 
-class _MyPageState extends State<ListDetailPage> {
+class _ListDetailPageState extends State<ListDetailPage> {
   late AlertDialog alertDialog;
+
 
   @override
   void initState() {
@@ -45,7 +53,7 @@ class _MyPageState extends State<ListDetailPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            TitleWidget(context, 'store name', 0),
+            TitleWidget(context, '${widget.post.storeName}', 0),
             Container(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -59,7 +67,7 @@ class _MyPageState extends State<ListDetailPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           '[ID]',
                           style: TextStyle(
