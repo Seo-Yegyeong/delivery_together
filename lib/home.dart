@@ -72,6 +72,7 @@ class MyButton extends StatefulWidget {
 
 class _MyButtonState extends State<MyButton> {
   late Post post;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

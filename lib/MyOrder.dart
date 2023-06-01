@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
+import 'MyPage.dart';
 import 'list.dart';
 
 class MyOrderPage extends StatefulWidget {
