@@ -268,6 +268,8 @@ class _WritingForm extends State<WritingForm> {
 
                 if(index == 4 && int.tryParse(value!) == null){
                   return '숫자를 입력하세요';
+                } else if (index == 4 && _member_count <= 0) {
+                  return '1명 이상 입력하세요';
                 }
 
                 return null;

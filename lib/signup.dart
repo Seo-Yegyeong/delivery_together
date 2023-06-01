@@ -94,8 +94,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter Email Address';
                 }
-                else if (!value.contains('@')) {
-                  return 'Please contain "@"';
+                else if (!value.contains('@handong')) {
+                  return 'Please sign up with handong email';
                 }
                 return null;
               },
