@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_together/utils/components.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
+//import 'package:logger/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +18,7 @@ int _member_count = 0;
 String _order_link = "";
 
 String _category = category_menu.first;
-var logger = Logger();
+//var logger = Logger();
 String _memo = "";
 
 
@@ -62,7 +62,7 @@ class _WritePageState extends State<WritePage> {
               final form = _formKey.currentState;
               if (form != null && form.validate()) {
                 form.save();
-                printFormValues();
+                //printFormValues();
 
                 CollectionReference post = FirebaseFirestore.instance.collection('post');
                 CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
@@ -105,13 +105,13 @@ class _WritePageState extends State<WritePage> {
   }
 
   /* For test */
-  void printFormValues() {
-    logger.i('가게 이름: $_store_name');
-    logger.i('받을 장소: $_pickup_spot');
-    logger.i('사람 수: $_member_count');
-    logger.i('배달의 민족 링크: $_order_link');
-    logger.i('카테고리: $_category');
-  }
+  // void printFormValues() {
+  //   logger.i('가게 이름: $_store_name');
+  //   logger.i('받을 장소: $_pickup_spot');
+  //   logger.i('사람 수: $_member_count');
+  //   logger.i('배달의 민족 링크: $_order_link');
+  //   logger.i('카테고리: $_category');
+  // }
 }
 
 class WritingForm extends StatefulWidget {

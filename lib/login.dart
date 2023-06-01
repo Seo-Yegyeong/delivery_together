@@ -9,6 +9,8 @@ import 'signup.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
+  static var go = false;
+  static bool isGoogle = true;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -22,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _passwordController = TextEditingController();
 
   Future<UserCredential> signInWithGoogle() async {
+    _signOut();
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -34,11 +37,19 @@ class _LoginPageState extends State<LoginPage> {
       idToken: googleAuth?.idToken,
     );
 
+    LoginPage.isGoogle = true;
+    LoginPage.go = true;
+
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   Future<UserCredential?> signInWithEmailAndPassword() async {
+
+    _signOut();
+    LoginPage.isGoogle = false;
+    LoginPage.go = true;
+    
     try {
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();

@@ -21,6 +21,7 @@ class Post {
   int memCurrentCnt;
   String orderTime;
   DateTime createdTime;
+  bool isWriter;
 
   Post({
     required this.storeName,
@@ -29,6 +30,7 @@ class Post {
     required this.memCurrentCnt,
     required this.orderTime,
     required this.createdTime,
+    required this.isWriter,
   });
 }
 
@@ -45,6 +47,7 @@ class _ListPageState extends State<ListPage> {
   Future<void> fetchData() async {
     firestore.QuerySnapshot querySnapshot =
     await firestore.FirebaseFirestore.instance.collection('post').get();
+    // final uid = FirebaseAuth.instance.currentUser?.uid;
     List<Post> tempList = [];
     querySnapshot.docs.forEach((doc) {
       String storeName = doc['storeName'];
@@ -54,6 +57,7 @@ class _ListPageState extends State<ListPage> {
       DateTime orderTime = doc['orderTime'].toDate();
       DateTime createdTime = doc['createdTime'].toDate();
       int remainingMinutes = calculateRemainingTime(orderTime);
+      // bool isWriter = ()
       String orderTimeString =
       remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString()+'분 후';
       Post post = Post(
@@ -63,6 +67,7 @@ class _ListPageState extends State<ListPage> {
         memCurrentCnt: memCurrentCnt,
         orderTime: orderTimeString,
         createdTime: createdTime,
+        isWriter: true,
       );
       tempList.add(post);
       tempList.sort((a, b) => b.createdTime.compareTo(a.createdTime));

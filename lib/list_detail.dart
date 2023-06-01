@@ -1,5 +1,6 @@
 import 'package:delivery_together/list.dart';
 import 'package:delivery_together/utils/components.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'DeliveryState.dart';
@@ -16,34 +17,13 @@ class ListDetailPage extends StatefulWidget {
 }
 
 class _ListDetailPageState extends State<ListDetailPage> {
-  late AlertDialog alertDialog;
-
-
+  final user = FirebaseAuth.instance.currentUser;
+  // firestore.QuerySnapshot querySnapshot =
+  //     await firestore.FirebaseFirestore.instance.collection('post').get();
   @override
   void initState() {
     super.initState();
-    alertDialog = AlertDialog(
-      content: const Text('정말 참여하시겠습니까?'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('참여되었습니다'),
-              ),
-            );
-          },
-          child: const Text('네'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('아니오'),
-        ),
-      ],
-    );
+
   }
 
   @override
@@ -68,15 +48,6 @@ class _ListDetailPageState extends State<ListDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '[ID]',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text('한동이'),
-                        SizedBox(height: 16.0),
                         Text(
                           '[장소]',
                           style: TextStyle(
@@ -112,7 +83,8 @@ class _ListDetailPageState extends State<ListDetailPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
+
+      bottomNavigationBar: ('${widget.post.orderTime}' == '주문 종료') ? SizedBox() : Container(
         decoration: BoxDecoration(
             color: Color(0xFF284463), //Color(0xFF98A5B3)
         ),
@@ -133,14 +105,37 @@ class _ListDetailPageState extends State<ListDetailPage> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return alertDialog;
+                  return alertDialog();
                 },
               );
-              Get.to(()=>DeliveryStatePage());
             }
           ),
         ),
       ),
     );
   }
+
+  Widget alertDialog() => AlertDialog(
+    content: const Text('정말 참여하시겠습니까?'),
+    actions: [
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('참여되었습니다'),
+            ),
+          );
+          Get.to(() => DeliveryStatePage());
+        },
+        child: const Text('네'),
+      ),
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: const Text('아니오'),
+      ),
+    ],
+  );
 }
