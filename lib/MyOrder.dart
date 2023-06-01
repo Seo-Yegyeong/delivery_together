@@ -68,6 +68,8 @@ class _MyOrderPage extends State<MyOrderPage> {
   }
 
   Future<void> fetchData() async {
+    print("userAuth: ");
+    print(userAuth);
 
     String? userEmail = Provider.of<UserProvider>(context, listen: false).email;
     print(userEmail);
