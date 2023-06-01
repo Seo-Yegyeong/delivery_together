@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'home.dart';
@@ -52,6 +53,18 @@ class _LoginPageState extends State<LoginPage> {
         password: password,
       );
 
+      if (userCredential.user != null) {
+        User user = userCredential.user!;
+        DocumentSnapshot snapshot = await userCollection.doc(user.uid).get();
+
+        if (!snapshot.exists) {
+          userCollection.doc(user.uid).set({
+            'email': user.email,
+            'name': user.displayName.toString(),
+          });
+        }
+      }
+
       return userCredential;
     } catch (e) {
       print('Login Error: $e');
@@ -74,12 +87,25 @@ class _LoginPageState extends State<LoginPage> {
         password: password,
       );
 
+      if (userCredential.user != null) {
+        User user = userCredential.user!;
+        DocumentSnapshot snapshot = await userCollection.doc(user.uid).get();
+
+        if (!snapshot.exists) {
+          userCollection.doc(user.uid).set({
+            'email': user.email,
+            'name': user.displayName.toString(),
+          });
+        }
+      }
+
       return userCredential;
     } catch (e) {
       print('Signup Error: $e');
       return null;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +126,7 @@ class _LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Center(
-          
           child: Column(
-            
             children: [
               const SizedBox(
                 height: 50,
@@ -143,8 +167,6 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () async {
                               final UserCredential? userCredential = await signInWithEmailAndPassword();
                               if (userCredential != null) {
-                                // 로그인 성공한 경우의 처리
-                                // 예: 홈 화면으로 이동
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                     builder: (context) => Home(),
@@ -181,30 +203,20 @@ class _LoginPageState extends State<LoginPage> {
                 width: 250, // Adjust the button width here
                 child: ElevatedButton(
                   onPressed: () async {
-                    final UserCredential? userCredential = await signInWithEmailAndPassword();
+                    final UserCredential? userCredential = await signInWithGoogle();
                     if (userCredential != null) {
                       User? user = userCredential.user;
 
                       if (user != null) {
-                        int i;
-                        querySnapshot = await userCollection.get();
+                        DocumentSnapshot snapshot = await userCollection.doc(user.uid).get();
 
-                        for (i = 0; i < querySnapshot.docs.length; i++) {
-                          var a = querySnapshot.docs[i];
-
-                          if (a.get('uid') == user.uid) {
-                            break;
-                          }
-                        }
-
-                        print('=============test1=============');
-                        if (i == (querySnapshot.docs.length)) {
+                        if (!snapshot.exists) {
                           userCollection.doc(user.uid).set({
                             'email': user.email,
                             'name': user.displayName.toString(),
                           });
                         }
-                        print('=============test2=============');
+
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => Home(),
@@ -233,5 +245,10 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ],
     );
+  }
+
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    Get.to(() => const LoginPage());
   }
 }
