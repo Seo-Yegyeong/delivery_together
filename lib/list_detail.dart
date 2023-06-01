@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_together/list.dart';
 import 'package:delivery_together/utils/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,13 +18,15 @@ class ListDetailPage extends StatefulWidget {
 
 class _ListDetailPageState extends State<ListDetailPage> {
   final user = FirebaseAuth.instance.currentUser;
-  CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
+  // CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
+
+
 
 
   @override
   void initState() {
     super.initState();
-
+    // postUser.docs
 
     // DocumentSnapshot snapshot = await userCollection.doc(user.uid).get();
     //
