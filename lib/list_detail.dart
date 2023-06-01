@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_together/list.dart';
 import 'package:delivery_together/utils/components.dart';
@@ -17,6 +19,8 @@ class ListDetailPage extends StatefulWidget {
   State<ListDetailPage> createState() => _ListDetailPageState();
 }
 
+bool isParticipating = false;
+
 class _ListDetailPageState extends State<ListDetailPage> {
   final user = FirebaseAuth.instance.currentUser;
 
@@ -24,22 +28,96 @@ class _ListDetailPageState extends State<ListDetailPage> {
   @override
   void initState() {
     super.initState();
-    // postUser.docs
 
-    // DocumentSnapshot snapshot = await userCollection.doc(user.uid).get();
-    //
-    // if (!snapshot.exists) {
-    //   userCollection.doc(user.uid).set({
-    //     'email': user.email,
-    //     'name': user.displayName.toString(),
-    //   });
-    // }
+    // isParticipating = false;
+    Stream<QuerySnapshot<Map<String, dynamic>>> myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList').snapshots();
+    Stream<List<DocumentSnapshot<Map<String, dynamic>>>> expandedStream = myUserList.asyncExpand((QuerySnapshot<Map<String, dynamic>> querySnapshot) async* {
+      yield querySnapshot.docs;
+    });
+    expandedStream.listen((List<DocumentSnapshot<Map<String, dynamic>>> documentList) {
+      // 확장된 스트림에서 방출된 문서 목록에 대한 작업 수행
+      for (DocumentSnapshot<Map<String, dynamic>> documentSnapshot in documentList) {
+        Map<String, dynamic>? data = documentSnapshot.data();
+        // dynamic value = data!['userID'];
+        // print(data!['userID'])
+        if(data!['userID'] == user!.uid) {
+          isParticipating = true;
+        }
+        print('나는 ' + user!.uid);
+        print('지금 데이터는 ' + data!['userID']);
+        print('여기야 여기!!!' + isParticipating.toString());
+      }
+    });
   }
+
+  // Future<bool> AmIpaticipating(Future<QuerySnapshot<Map<String, dynamic>>> myUserList) async {
+  //   bool outresult = false;
+  //   List<String> userIDList = [];
+  //
+  //   await myUserList.then((value){
+  //     if(userIDList.contains(value.docs.first.id) == false){
+  //       userIDList.add(value.docs.first.id);
+  //       print(value.docs.first.id);
+  //     }
+  //   });
+  //   userIDList.forEach((element) {print('============$element============');});
+  //   print('userIDList : ' + userIDList.toString());
+  //   return outresult;
+  //   // bool outresult = false;
+  //   // myUserList.get().then((QuerySnapshot querySnapshot) {
+  //   //   bool innerresult = false;
+  //   //   querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) => {
+  //   //   // Perform necessary operations without returning a value
+  //   //     print(documentSnapshot.get('userID')),
+  //   //
+  //   //     if(documentSnapshot.get('userID') == user?.uid){
+  //   //       innerresult = true,
+  //   //       print('innerresult : ' + innerresult.toString())
+  //   //     }
+  //   //   });
+  //   //   outresult = innerresult;
+  //   // });
+  //   // print('outresult : ' + outresult.toString());
+  //   // return outresult;
+  //
+  //   // bool result = false;
+  //   // myUserList.get().then((QueryDocumentSnapshot querySnapshot){
+  //   //   print(querySnapshot.data().toString());
+  //   //   if(querySnapshot.get('userID') == user?.uid) {
+  //   //     result = true;
+  //   //   }
+  //   // } as FutureOr Function(QuerySnapshot<Object?> value));
+  //   // return result;
+  //
+  //   // bool result = false;
+  //   // myUserList.get().then((QueryDocumentSnapshot querySnapshot){
+  //   //   print(querySnapshot.data().toString()
+  //   //       if(querySnapshot.get('userID') == user?.uid) {
+  //   //   result = true;
+  //   //   }
+  //   // } as FutureOr Function(QuerySnapshot<Object?> value));
+  //   // return result;
+  //
+  //   // List<String> userIDList = [];
+  //   // bool result = false;
+  //   // myUserList.get().then((QueryDocumentSnapshot querySnapshot){
+  //   //
+  //   //   userIDList.add(querySnapshot.get('userID'));
+  //   // } as FutureOr Function(QuerySnapshot<Object?> value));
+  //   // userIDList.forEach((element) {
+  //   //   if(element == user!.uid)
+  //   //     return true;
+  //   // });
+  //   // return result;
+  // }
+
+  // Widget checkWriter(CollectionReference myUserList)=>Container(
+  //   child: (amIpaticipating(myUserList)==true)? Text('내가 적었엉!!'): Text('내가 안 적었엉!!!'),
+  // );
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList');
-
+    // Future<QuerySnapshot<Map<String, dynamic>>> myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList').get();
 
     return Scaffold(
       appBar: FixedAppBar(context),
@@ -72,6 +150,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         myText('주문 시간'),
                         SizedBox(height: 8.0),
                         Text('${widget.post.orderTime}'),
+                        //(AmIpaticipating(myUserList)==true)? Text('내가 적었엉!!', style: TextStyle(fontSize: 30),): Text('내가 안 적었엉!!!', style: TextStyle(fontSize: 30),),
                       ],
                     ),
                   ),
