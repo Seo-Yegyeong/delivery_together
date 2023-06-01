@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../home.dart';
+import '../write_order.dart';
 import 'size.dart';
 
 PreferredSizeWidget FixedAppBar(context) => AppBar(
+  backgroundColor: Color(0xFF284463),
   title: Center(
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -22,7 +26,7 @@ PreferredSizeWidget FixedAppBar(context) => AppBar(
   automaticallyImplyLeading: false,
 );
 
-Widget TitleWidget(context, title) => Column(
+Widget TitleWidget(context, title, type) => Column(
   children: [
     Container(
       decoration: BoxDecoration(
@@ -39,7 +43,7 @@ Widget TitleWidget(context, title) => Column(
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.pop(context);
+                Get.to(()=>Home());
               },
               child: Container(
                 width: 52,
@@ -59,7 +63,7 @@ Widget TitleWidget(context, title) => Column(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 50,),
+            (type == 0)? const SizedBox(width: 50,) : WritingButton(),
           ],
         ),
       ),
@@ -67,25 +71,27 @@ Widget TitleWidget(context, title) => Column(
   ],
 );
 
-class Components {
-  AppBar component_AppBar(){
-    return AppBar(
-        // leading: Icon(icon: Icons.work),
-        title: Center(child: Text('같이 먹자')),
-        toolbarHeight: 100,
-      );
-  }
-}
-
-// class Components extends StatelessWidget {
-//   const Components({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const AppBar(
-//         // leading: Icon(icon: Icons.work),
-//         title: Center(child: Text('같이 먹자', style: TextStyle(fontSize: 30),)),
-//         toolbarHeight: getAppBarHeight(context),
-//       );
-//   }
-// }
+Widget WritingButton() => GestureDetector(
+  onTap: () {
+    // Write button action
+  },
+  child: Container(
+    width: 45,
+    height: 45,
+    decoration: BoxDecoration(
+      color: const Color(0xFF284463),
+      borderRadius: BorderRadius.circular(26),
+    ),
+    child: GestureDetector(
+      onTap: () {
+        Get.to(() => WritePage());
+      },
+      child: Center(
+        child: Image.asset(
+          'assets/icon/write.png',
+          width: 42,
+        ),
+      ),
+    ),
+  ),
+);
