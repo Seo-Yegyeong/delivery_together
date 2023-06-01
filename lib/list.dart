@@ -39,6 +39,7 @@ class _ListPageState extends State<ListPage> {
   void initState() {
     super.initState();
     fetchData();
+    print(postList);
   }
 
   Future<void> fetchData() async {
@@ -92,7 +93,7 @@ class _ListPageState extends State<ListPage> {
                     Post post = postList[index];
                     return GestureDetector(
                       onTap: (){
-                        Get.to(()=>ListDetailPage());
+                        Get.to(()=>ListDetailPage(post: post));
                       },
                       child: Container(
                         width: double.infinity,
