@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+
+import 'login.dart';
 
 class MyInfo extends StatefulWidget{
   const MyInfo({Key? key}) : super(key: key);
@@ -70,11 +73,7 @@ class _MyInfoState extends State<MyInfo> {
               userProvider.name ?? '',
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
-            Text(
-              'Nick name : sooooo',
-              style: TextStyle(fontSize: 20, color: Colors.grey),
-            ),
+            
 
             SizedBox(height: 20),
             ListTile(
@@ -82,16 +81,11 @@ class _MyInfoState extends State<MyInfo> {
               title: Text('Email',style: TextStyle(fontSize: 18,color:Colors.white)),
               subtitle: Text(userProvider.email ?? '', style:TextStyle(fontSize:16,color:Colors.grey)),
             ),
-            ListTile(
-              leading: Icon(Icons.phone,color:Colors.white),
-              title: Text('Phone',style: TextStyle(fontSize:18 ,color:Colors.white)),
-              subtitle: Text('+82 010-1111-1111',style:TextStyle(fontSize:16,color:Colors.grey)),
-            ),
             SizedBox(height: 20),
             ElevatedButton( // 로그아웃 버튼
 
               onPressed: () {
-
+                _signOut();
               },
               child: Text('Logout'),
             ),
@@ -104,6 +98,11 @@ class _MyInfoState extends State<MyInfo> {
     );
   }
 
+Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    LoginPage.go = false;
+    Get.to(() => const LoginPage());
+  }
 }
 
 // class MyInfo extends StatelessWidget {
