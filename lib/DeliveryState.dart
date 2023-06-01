@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'list.dart';
+import 'home.dart';
 
 class DeliveryStatePage extends StatefulWidget {
-  // final Post post;
+  final PostID postID;
   const DeliveryStatePage({Key? key,
-    // required this.post
+    required this.postID
   }) : super(key: key);
 
   @override
@@ -257,8 +257,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  'hello~~!~!~!~!'
-                    // '${widget.post.storeName}'
+                  '${widget.postID.PostIndex}'
                 ),
                 // child: (
                 //   //Text();

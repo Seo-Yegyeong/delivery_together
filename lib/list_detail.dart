@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_together/home.dart';
 import 'package:delivery_together/list.dart';
 import 'package:delivery_together/utils/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -125,7 +126,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
             ),
           );
           Get.to(() => DeliveryStatePage(
-              // post: widget.post
+              postID: PostID
           ));
         },
         child: const Text('네'),

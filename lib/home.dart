@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:delivery_together/DeliveryState.dart';
 import 'package:delivery_together/utils/components.dart';
 import 'package:delivery_together/utils/size.dart';
@@ -36,7 +37,10 @@ class Home extends StatelessWidget {
   }
 }
 
-
+class PostID{
+  String PostIndex;
+  PostID ({required this.PostIndex,});
+}
 
 class MyButton extends StatefulWidget {
   int index;
@@ -60,17 +64,32 @@ class MyButton extends StatefulWidget {
   static List<Widget> _LinkTo = <Widget>[
     ListPage(),
     WritePage(),
-    DeliveryStatePage(),
+    DeliveryStatePage(postID: PostID),
     MyPage(),
   ];
-
-  // static get post => null;
 
   @override
   State<MyButton> createState() => _MyButtonState();
 }
 
 class _MyButtonState extends State<MyButton> {
+  List<Post> postID = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+  Future<void> fetchData() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+     firestore.QuerySnapshot querySnapshot = await firestore.FirebaseFirestore.instance.collection('user').doc(uid).collection('postList').orderBy('timestamp', descending: true).limit(1).get();
+    querySnapshot.docs.forEach((doc) {
+      String PostIndex = doc['postID'];
+       PostID postID = PostID(PostIndex: PostIndex);
+    });
+
+    }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
