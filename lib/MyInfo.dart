@@ -13,6 +13,7 @@ class MyInfo extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => _MyInfoState();
 }
+
 class UserProvider extends ChangeNotifier {
   String? email;
   String? name;

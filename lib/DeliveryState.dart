@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'list.dart';
+
+
+
 class DeliveryStatePage extends StatefulWidget {
-  const DeliveryStatePage({Key? key}) : super(key: key);
+  final Post post;
+  const DeliveryStatePage({Key? key, required this.post}) : super(key: key);
 
   @override
   State<DeliveryStatePage> createState() => _DeliveryStatePageState();
@@ -250,18 +255,10 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: FutureBuilder<String>(
-                  future: getStoreNameFromPost(),
-                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return Text('Store Name: ${snapshot.data}');
-                    }
-                  },
-                ),
+                child: Text('${widget.post.storeName}'),
+                // child: (
+                //   //Text();
+                // ),
               ),
             ],
           ),

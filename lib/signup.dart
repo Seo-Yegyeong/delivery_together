@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_together/login.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -17,6 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> _signUp() async {
     if (_formKey.currentState!.validate()) {
+      final name = _nameController.text;
       final email = _emailController.text;
       final password = _passwordController.text;
       
@@ -26,6 +29,11 @@ class _SignUpPageState extends State<SignUpPage> {
           email: email,
           password: password,
         );
+        
+        await FirebaseFirestore.instance.collection('user').doc(userCredential.user!.uid).set({
+        'name': name,
+        'email': email,
+      });
         
         // 사용자 등록 후 추가 작업 수행 가능
         
@@ -62,6 +70,20 @@ class _SignUpPageState extends State<SignUpPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           children: <Widget>[
             const SizedBox(height: 50.0),
+            TextFormField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                filled: true,
+                labelText: 'Name',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your name';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 12.0),
             TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(
