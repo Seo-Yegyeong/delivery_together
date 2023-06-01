@@ -15,22 +15,22 @@ class ListPage extends StatefulWidget {
 }
 
 class Post {
+  String postID;
   String storeName;
   String pickupSpot;
   int memTotalCnt;
   int memCurrentCnt;
   String orderTime;
   DateTime createdTime;
-  bool isWriter;
 
   Post({
+    required this.postID,
     required this.storeName,
     required this.pickupSpot,
     required this.memTotalCnt,
     required this.memCurrentCnt,
     required this.orderTime,
     required this.createdTime,
-    required this.isWriter,
   });
 }
 
@@ -50,6 +50,7 @@ class _ListPageState extends State<ListPage> {
     // final uid = FirebaseAuth.instance.currentUser?.uid;
     List<Post> tempList = [];
     querySnapshot.docs.forEach((doc) {
+      String postID = doc['postID'];
       String storeName = doc['storeName'];
       String pickupSpot = doc['pickupSpot'];
       int memTotalCnt = doc['memTotalCnt'];
@@ -57,17 +58,16 @@ class _ListPageState extends State<ListPage> {
       DateTime orderTime = doc['orderTime'].toDate();
       DateTime createdTime = doc['createdTime'].toDate();
       int remainingMinutes = calculateRemainingTime(orderTime);
-      // bool isWriter = ()
       String orderTimeString =
       remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString()+'분 후';
       Post post = Post(
+        postID: postID,
         storeName: storeName,
         pickupSpot: pickupSpot,
         memTotalCnt: memTotalCnt,
         memCurrentCnt: memCurrentCnt,
         orderTime: orderTimeString,
         createdTime: createdTime,
-        isWriter: true,
       );
       tempList.add(post);
       tempList.sort((a, b) => b.createdTime.compareTo(a.createdTime));

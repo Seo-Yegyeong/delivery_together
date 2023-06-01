@@ -19,13 +19,12 @@ class ListDetailPage extends StatefulWidget {
 
 class _ListDetailPageState extends State<ListDetailPage> {
   final user = FirebaseAuth.instance.currentUser;
-  CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
 
 
   @override
   void initState() {
     super.initState();
-
+    // postUser.docs
 
     // DocumentSnapshot snapshot = await userCollection.doc(user.uid).get();
     //
@@ -39,6 +38,9 @@ class _ListDetailPageState extends State<ListDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference myUserList = FirebaseFirestore.instance.collection('post').doc('${widget.post.postID}').collection('userList');
+
+
     return Scaffold(
       appBar: FixedAppBar(context),
       body: SingleChildScrollView(

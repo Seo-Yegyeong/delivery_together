@@ -31,7 +31,7 @@ class WritePage extends StatefulWidget {
 }
 
 class _WritePageState extends State<WritePage> {
-  final user = FirebaseAuth.instance.currentUser;
+  final me = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class _WritePageState extends State<WritePage> {
                 //printFormValues();
 
                 CollectionReference post = FirebaseFirestore.instance.collection('post');
-                CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
+                CollectionReference myPostList = FirebaseFirestore.instance.collection('user').doc('${me?.uid}').collection('postList');
                 _current_time = DateTime.now(); //2023-05-29 18:04:45.425863
                 DateTime orderDateTime = DateFormat('yyyy-MM-dd hh:mm:ss').parse('${DateFormat('yyyy-MM-dd').format(_current_time)} $_order_time');
 
@@ -90,9 +90,14 @@ class _WritePageState extends State<WritePage> {
                   'state': 0,
                 });
 
-                postUser.add({
+                CollectionReference myUserList = FirebaseFirestore.instance.collection('post').doc('${postID}').collection('userList');
+                myUserList.doc(me?.uid).set({
+                  'userID': me?.uid,
+                  'isWriter': true,
+                });
+
+                myPostList.doc(postID).set({
                   'postId': postID,
-                  'memberId': user?.email,
                   'isWriter': true
                 });
 
@@ -263,6 +268,8 @@ class _WritingForm extends State<WritingForm> {
 
                 if(index == 4 && int.tryParse(value!) == null){
                   return '숫자를 입력하세요';
+                } else if (index == 4 && _member_count <= 0) {
+                  return '1명 이상 입력하세요';
                 }
 
                 return null;
