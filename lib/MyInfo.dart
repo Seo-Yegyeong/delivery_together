@@ -22,7 +22,7 @@ class UserProvider extends ChangeNotifier {
 }
 
 class _MyInfoState extends State<MyInfo> {
-  final user = FirebaseAuth.instance.currentUser;
+  final userAuth = FirebaseAuth.instance.currentUser;
   @override
   void initState() {
     super.initState();
@@ -32,7 +32,7 @@ class _MyInfoState extends State<MyInfo> {
   Future<void> fetchUserData() async {
     try {
       DocumentSnapshot userSnapshot = (await FirebaseFirestore.instance
-          .collection('user').doc().get()) as DocumentSnapshot<Object?>;
+          .collection('user').doc(userAuth?.uid).get()) as DocumentSnapshot<Object?>;
 
       if (userSnapshot.exists) {
 
