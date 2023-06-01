@@ -72,7 +72,6 @@ class _MyOrderPage extends State<MyOrderPage> {
     print(userEmail);
     if (userEmail != null) {
       print("된다!");
-      // 2. user 컬렉션에서 해당 이메일과 일치하는 문서 조회
       firestore.QuerySnapshot userSnapshot = await firestore.FirebaseFirestore.instance
           .collection('user')
           .where('email', isEqualTo: userEmail)
