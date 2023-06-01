@@ -9,8 +9,10 @@ import 'list.dart';
 
 
 class DeliveryStatePage extends StatefulWidget {
-  final Post post;
-  const DeliveryStatePage({Key? key, required this.post}) : super(key: key);
+  // final Post post;
+  const DeliveryStatePage({Key? key,
+    // required this.post
+  }) : super(key: key);
 
   @override
   State<DeliveryStatePage> createState() => _DeliveryStatePageState();
@@ -255,7 +257,10 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('${widget.post.storeName}'),
+                child: Text(
+                  'hello~~!~!~!~!'
+                    // '${widget.post.storeName}'
+                ),
                 // child: (
                 //   //Text();
                 // ),

@@ -60,18 +60,17 @@ class MyButton extends StatefulWidget {
   static List<Widget> _LinkTo = <Widget>[
     ListPage(),
     WritePage(),
-    DeliveryStatePage(post: post),
+    DeliveryStatePage(),
     MyPage(),
   ];
 
-  static get post => null;
+  // static get post => null;
 
   @override
   State<MyButton> createState() => _MyButtonState();
 }
 
 class _MyButtonState extends State<MyButton> {
-  late Post post;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
