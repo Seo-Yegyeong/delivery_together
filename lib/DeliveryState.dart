@@ -185,6 +185,8 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
     if (myPost.docs.isNotEmpty) {
       isWriter = myPost.docs.first.get('isWriter');
       updateWriterState(isWriter);
+      print("mypost에서의 postID");
+      print(myPost.docs.first.get('postId'));
     }
     // QuerySnapshot querySnapshot = await _firestore.collection('post').doc('${widget.post.postID}').collection('userList');
     // QuerySnapshot querySnapshot = await _firestore.collection('post-user').where('memberId', isEqualTo: user?.email).get();
