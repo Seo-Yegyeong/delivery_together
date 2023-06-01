@@ -64,12 +64,15 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
 
 
   Future<bool> checkWriterState() async {
-    QuerySnapshot querySnapshot = await _firestore.collection('post-user').where('memberId', isEqualTo: user?.email).get();
+    //DocumentSnapshot firstDoc;
 
-    if (querySnapshot.docs.isNotEmpty) {
-      isWriter = querySnapshot.docs.first.get('isWriter');
+    QuerySnapshot myPost = await FirebaseFirestore.instance.collection('user').doc(user?.uid).collection('postList').get();
+    if (myPost.docs.isNotEmpty) {
+      isWriter = myPost.docs.first.get('isWriter');
       updateWriterState(isWriter);
     }
+    // QuerySnapshot querySnapshot = await _firestore.collection('post').doc('${widget.post.postID}').collection('userList');
+    // QuerySnapshot querySnapshot = await _firestore.collection('post-user').where('memberId', isEqualTo: user?.email).get();
 
     return isWriter;
   }
@@ -86,188 +89,188 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
     return snapshot.get('currentSlide') ?? 0;
   }
 
-  Future<String> getStoreNameFromPost() async {
-    DocumentSnapshot postUserDoc =
-    await _firestore.collection('post-user').doc(user?.uid).get();
-
-    if (postUserDoc.exists) {
-      String postId = postUserDoc.get('post-id');
-
-      DocumentSnapshot postDoc =
-      await _firestore.collection('post').doc(postId).get();
-
-      if (postDoc.exists) {
-        return postDoc.get('storeName');
-      }
-    }
-
-    return '';
-  }
-
   @override
   Widget build(BuildContext context) {
     print("Current User Email: ${user?.email}");
     return MaterialApp(
-      home: Scaffold(
-        appBar: FixedAppBar(context),
-        body: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF98A5B3),
+        home: Scaffold(
+          appBar: FixedAppBar(context),
+          body: Container(
+            decoration: const BoxDecoration(
+              color: Color(0xFF98A5B3),
+            ),
+            child: Column(
+                children: [
+            Container(
+            decoration: BoxDecoration(
+            color: const Color(0xFF67727D),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
           ),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF67727D),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          width: 52,
-                          height: 30,
-                          child: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        'Delivery States',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      isWriter
-                          ? GestureDetector(
-                        onTap: () {
-                          if(currentSlide == imageList.length - 1) {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Delivery Complete!'),
-                                    content: Text('The delivery has been completed successfully!'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, 'OK'),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  );
-                                }
-                            );
-                          } else {
-                            updateSlideState((currentSlide + 1) % imageList.length);
-                          }
-                        },
-                        child: Container(
-                          width: 45,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF284463),
-                            borderRadius: BorderRadius.circular(26),
-                          ),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/icon/info.png',
-                            ),
-                          ),
-                        ),
-                      )
-                          : Container(),
-                    ],
-                  ),
-                ),
-              ),
-              CarouselSlider(
-                  carouselController: _controller,
-                  items: imageList.map((imagePath) {
-                    return Builder(builder: (BuildContext context) {
-                      return Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            image: DecorationImage(
-                                image: AssetImage(imagePath), fit: BoxFit.cover)),
-                      );
-                    });
-                  }).toList(),
-                  options: CarouselOptions(
-                    height: 300.0,
-                    autoPlay: false,
-                    enableInfiniteScroll: false,
-                    scrollPhysics: NeverScrollableScrollPhysics(),
-                    enlargeCenterPage: true,
-                    initialPage: currentSlide,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        currentSlide = index;
-                      });
-                    },
-                  )),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: imageList.asMap().entries.map((entry) {
-                  return GestureDetector(
-                    onTap: () {
-                      _controller.jumpToPage(entry.key);
-                      setState(() {});
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(12),
-                      height: 10,
-                      width: 10,
-                      decoration: BoxDecoration(
-                        shape: currentSlide == entry.key
-                            ? BoxShape.circle
-                            : BoxShape.rectangle,
-                        color: currentSlide == entry.key
-                            ? Colors.blue
-                            : Colors.grey,
-                      ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // mainAxisAlignment를 spaceBetween으로 변경
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    width: 52,
+                    height: 30,
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 25,
                     ),
-                  );
-                }).toList(),
-              ),
-              Container(
-                margin: EdgeInsets.all(10.0),
-                padding: EdgeInsets.all(10.0),
-                width: double.infinity,
-                height: 100.0,
+                  ),
+                ),
+                const Text(
+                  'Delivery States',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(width: 52), // 아이콘을 중앙에 배치하기 위한 빈 컨테이너
+              ],
+            ),
+          ),
+        ),
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: CarouselSlider(
+          carouselController: _controller,
+          items: imageList.map((imagePath) {
+            return Builder(builder: (BuildContext context) {
+              return Container(
+                width: 250,
+                height: 400,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(20.0),
+                  image: DecorationImage(
+                    image: AssetImage(imagePath), fit: BoxFit.cover,
+                  ),
                 ),
-                child: Text(
-                  'hello~~!~!~!~!'
-                    // '${widget.post.storeName}'
-                ),
-                // child: (
-                //   //Text();
-                // ),
-              ),
-            ],
+              );
+            });
+          }).toList(),
+          options: CarouselOptions(
+            height: 300.0,
+            autoPlay: false,
+            enableInfiniteScroll: false,
+            scrollPhysics: NeverScrollableScrollPhysics(),
+            enlargeCenterPage: true,
+            initialPage: currentSlide,
+            onPageChanged: (index, reason) {
+              setState(() {
+                currentSlide = index;
+              });
+            },
           ),
         ),
       ),
+        SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: imageList.asMap().entries.map((entry) {
+            return GestureDetector(
+              onTap: () {
+                _controller.jumpToPage(entry.key);
+                setState(() {});
+              },
+              child: Container(
+                margin: EdgeInsets.all(12),
+                height: 10,
+                width: 10,
+                decoration: BoxDecoration(
+                  shape: currentSlide == entry.key
+                      ? BoxShape.circle
+                      : BoxShape.rectangle,
+                  color: currentSlide == entry.key
+                      ? Colors.blue
+                      : Colors.grey,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        isWriter
+            ? Container()
+            : GestureDetector(
+          onTap: () {
+          if (currentSlide == imageList.length - 1) {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Delivery Complete!'),
+                content: Text('The delivery has been completed successfully!'),
+            actions: [
+              TextButton(
+                onPressed: (){
+                  setState(() {
+
+                  });
+                  Navigator.pop(context, 'OK');
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+            },
+        );
+      } else {
+            setState(() {
+              currentSlide = (currentSlide + 1) % imageList.length;
+              _controller.jumpToPage(currentSlide);
+            });
+          }
+        },
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFF284463),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Center(
+              child: ClipOval(
+                child: AspectRatio(
+                  aspectRatio: 1/1, // For square images
+                  child: Image.asset(
+                    'assets/icon/button.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+                  Container(
+                    margin: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(10.0),
+                    width: double.infinity,
+                    height: 100.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                        'hello~~!~!~!~!'
+                      // '${widget.post.storeName}'
+                    ),
+                  ),
+                ],
+            ),
+          ),
+        ),
     );
   }
 }
