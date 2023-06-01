@@ -3,10 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'list.dart';
-
-
 
 class DeliveryStatePage extends StatefulWidget {
   final Post post;
@@ -211,6 +208,8 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                   options: CarouselOptions(
                     height: 300.0,
                     autoPlay: false,
+                    enableInfiniteScroll: false,
+                    scrollPhysics: NeverScrollableScrollPhysics(),
                     enlargeCenterPage: true,
                     initialPage: currentSlide,
                     onPageChanged: (index, reason) {
