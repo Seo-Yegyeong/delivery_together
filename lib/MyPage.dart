@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'list.dart';
+import 'list_detail.dart';
 import 'login.dart';
 
 class MyPage extends StatelessWidget {
@@ -214,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   MyPost post = postList[index];
                   return GestureDetector(
                     onTap: (){
-                      // Get.to(()=>ListDetailPage(post: post));
+                       //Get.to(()=>ListDetailPage(post: post));
                     },
                     child: Container(
                       width: double.infinity,
@@ -228,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(post.storeName,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 25,
                               color: Colors.white,
                             ),
