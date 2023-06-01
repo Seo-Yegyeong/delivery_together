@@ -36,14 +36,10 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+
+class _MyHomePageState extends State<MyHomePage> {
+
   final ButtonStyle ElevatedButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: const Color(0xFF284463),
     minimumSize: const Size(100, 70),
