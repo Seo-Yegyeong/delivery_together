@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
 import 'login.dart';
+import 'MyPage.dart';
 
 class MyInfo extends StatefulWidget{
   const MyInfo({Key? key}) : super(key: key);
@@ -14,16 +15,16 @@ class MyInfo extends StatefulWidget{
   State<StatefulWidget> createState() => _MyInfoState();
 }
 
-class UserProvider extends ChangeNotifier {
-  String? email;
-  String? name;
-
-  void setUser(String email, String name) {
-    this.email = email;
-    this.name = name;
-    notifyListeners();
-  }
-}
+// class UserProvider extends ChangeNotifier {
+//   String? email;
+//   String? name;
+//
+//   void setUser(String email, String name) {
+//     this.email = email;
+//     this.name = name;
+//     notifyListeners();
+//   }
+// }
 
 class _MyInfoState extends State<MyInfo> {
   final userAuth = FirebaseAuth.instance.currentUser;

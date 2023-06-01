@@ -63,7 +63,7 @@ class User{
   });
 }
 
-class Post {
+class PostMypage {
   String storeName;
   String pickupSpot;
   int memTotalCnt;
@@ -71,7 +71,7 @@ class Post {
   String orderTime;
   DateTime createdTime;
 
-  Post({
+  PostMypage({
     required this.storeName,
     required this.pickupSpot,
     required this.memTotalCnt,
@@ -95,7 +95,7 @@ class PostUser{
 
 class _MyHomePageState extends State<MyHomePage> {
   final userAuth = FirebaseAuth.instance.currentUser;
-  List<Post> postList = [];
+  List<PostMypage> postList = [];
   @override
   void initState() {
     super.initState();
@@ -134,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
           print(postId);
         });
 
-        List<Post> tempList = [];
+        List<PostMypage> tempList = [];
         for (String postId in postIds) {
           // 4. post 컬렉션에서 postId에 해당하는 문서 조회
           firestore.DocumentSnapshot postSnapshot = await firestore.FirebaseFirestore.instance
@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
             DateTime createdTime = postSnapshot['createdTime'].toDate();
             int remainingMinutes = calculateRemainingTime(orderTime);
             String orderTimeString = remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString() + '분 후';
-            Post post = Post(
+            PostMypage post = PostMypage(
               storeName: storeName,
               pickupSpot: pickupSpot,
               memTotalCnt: memTotalCnt,
@@ -232,112 +232,114 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: Text('Logout'),
           ),
-          Scrollbar(
-            child: ListView.builder(
-              itemCount: postList.length,
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, index) {
-                Post post = postList[index];
-                return GestureDetector(
-                  onTap: (){
-                    // Get.to(()=>ListDetailPage(post: post));
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    padding: EdgeInsets.fromLTRB(8,10,8,10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF284463),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(post.storeName,
-                          style: TextStyle(
-                            fontSize: 25,
-                            color: Colors.white,
+          Expanded(
+            child: Scrollbar(
+              child: ListView.builder(
+                itemCount: postList.length,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, index) {
+                  PostMypage post = postList[index];
+                  return GestureDetector(
+                    onTap: (){
+                      // Get.to(()=>ListDetailPage(post: post));
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      padding: EdgeInsets.fromLTRB(8,10,8,10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF284463),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(post.storeName,
+                            style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 130,
-                              height: 40,
-                              margin: EdgeInsets.only(top: 10),
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                width: 130,
+                                height: 40,
+                                margin: EdgeInsets.only(top: 10),
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                alignment: Alignment.center,
+                                child:Text(post.pickupSpot,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,),
+                                ),
                               ),
-                              alignment: Alignment.center,
-                              child:Text(post.pickupSpot,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.black,),
+                              Container(
+                                width: 90,
+                                height: 40,
+                                margin: EdgeInsets.only(top: 10),
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '${post.memCurrentCnt.toString()}/${post.memTotalCnt.toString()}',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    backgroundColor: Colors.white,
+                                    fontSize: 20,
+                                    color: Colors.black,),
+                                ),
                               ),
-                            ),
-                            Container(
-                              width: 90,
-                              height: 40,
-                              margin: EdgeInsets.only(top: 10),
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
+                              Container(
+                                width: 130,
+                                height: 40,
+                                margin: EdgeInsets.only(top: 10),
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(post.orderTime,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    backgroundColor: Colors.white,
+                                    fontSize: 20,
+                                    color: Colors.black,),
+                                ),
                               ),
-                              child: Text(
-                                '${post.memCurrentCnt.toString()}/${post.memTotalCnt.toString()}',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  backgroundColor: Colors.white,
-                                  fontSize: 20,
-                                  color: Colors.black,),
-                              ),
-                            ),
-                            Container(
-                              width: 130,
-                              height: 40,
-                              margin: EdgeInsets.only(top: 10),
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(post.orderTime,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  backgroundColor: Colors.white,
-                                  fontSize: 20,
-                                  color: Colors.black,),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
 
 
-          Container(
-            margin: const EdgeInsets.symmetric(
-              vertical: 10,
-              horizontal: 20,
-            ),
-            child: ElevatedButton(
-              style: elevatedButtonStyle,
-              onPressed: () {
-                Get.to(() => MyOrderPage());
-              },
-              child: const Text("주문 기록", style: TextStyle(fontSize: 18)),
-            ),
-          ),
+          // Container(
+          //   margin: const EdgeInsets.symmetric(
+          //     vertical: 10,
+          //     horizontal: 20,
+          //   ),
+          //   child: ElevatedButton(
+          //     style: elevatedButtonStyle,
+          //     onPressed: () {
+          //       Get.to(() => MyOrderPage());
+          //     },
+          //     child: const Text("주문 기록", style: TextStyle(fontSize: 18)),
+          //   ),
+          // ),
         ],
       ),
     );

@@ -122,7 +122,9 @@ class _ListDetailPageState extends State<ListDetailPage> {
               content: Text('참여되었습니다'),
             ),
           );
-          Get.to(() => DeliveryStatePage(post: widget.post));
+          Get.to(() => DeliveryStatePage(
+              // post: widget.post
+          ));
         },
         child: const Text('네'),
       ),
