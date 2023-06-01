@@ -33,7 +33,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                 content: Text('참여되었습니다'),
               ),
             );
-            Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryStatePage()));
+            Get.to(() => DeliveryStatePage());
           },
           child: const Text('네'),
         ),
@@ -104,7 +104,8 @@ class _ListDetailPageState extends State<ListDetailPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
+
+      bottomNavigationBar: ('${widget.post.orderTime}' == '주문 종료') ? Container() : Container(
         decoration: BoxDecoration(
             color: Color(0xFF284463), //Color(0xFF98A5B3)
         ),
