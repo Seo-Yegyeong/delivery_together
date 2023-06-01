@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_together/list.dart';
 import 'package:delivery_together/utils/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,12 +19,22 @@ class ListDetailPage extends StatefulWidget {
 
 class _ListDetailPageState extends State<ListDetailPage> {
   final user = FirebaseAuth.instance.currentUser;
-  // firestore.QuerySnapshot querySnapshot =
-  //     await firestore.FirebaseFirestore.instance.collection('post').get();
+  CollectionReference postUser = FirebaseFirestore.instance.collection('post-user');
+
+
   @override
   void initState() {
     super.initState();
 
+
+    // DocumentSnapshot snapshot = await userCollection.doc(user.uid).get();
+    //
+    // if (!snapshot.exists) {
+    //   userCollection.doc(user.uid).set({
+    //     'email': user.email,
+    //     'name': user.displayName.toString(),
+    //   });
+    // }
   }
 
   @override
@@ -48,30 +59,15 @@ class _ListDetailPageState extends State<ListDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '[장소]',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        myText('장소'),
                         SizedBox(height: 8.0),
                         Text('${widget.post.pickupSpot}'),
                         SizedBox(height: 16.0),
-                        Text(
-                          '[모집 인원]',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        myText('모집 인원'),
                         SizedBox(height: 8.0),
                         Text('${widget.post.memCurrentCnt}/${widget.post.memTotalCnt}',),
                         SizedBox(height: 16.0),
-                        Text(
-                          '[주문 시간]',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        myText('주문 시간'),
                         SizedBox(height: 8.0),
                         Text('${widget.post.orderTime}'),
                       ],
@@ -84,7 +80,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
         ),
       ),
 
-      bottomNavigationBar: ('${widget.post.orderTime}' == '주문 종료') ? SizedBox() : Container(
+      bottomNavigationBar: ('${widget.post.orderTime}' == '주문 종료' ) ? SizedBox() : Container(
         decoration: BoxDecoration(
             color: Color(0xFF284463), //Color(0xFF98A5B3)
         ),
@@ -137,5 +133,12 @@ class _ListDetailPageState extends State<ListDetailPage> {
         child: const Text('아니오'),
       ),
     ],
+  );
+
+  Widget myText(text) => Text(
+    '${text}',
+    style: TextStyle(
+      fontWeight: FontWeight.bold,
+    ),
   );
 }
