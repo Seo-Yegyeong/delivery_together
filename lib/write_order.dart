@@ -77,6 +77,7 @@ class _WritePageState extends State<WritePage> {
                 var postID = querySnapshot.size.toString();
 
                 post.doc(postID).set({
+                  'postID': postID,
                   'storeName': _store_name,
                   'pickupSpot': _pickup_spot,
                   'category': _category,
