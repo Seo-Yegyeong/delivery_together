@@ -42,81 +42,12 @@ class _ListDetailPageState extends State<ListDetailPage> {
           Map<String, dynamic>? data = documentSnapshot.data();
           if('${data!['userID']}' == '${user!.uid}') {
             isParticipating = true;
-            print('성공~');
+            // print('성공~');
           }
-          print('나는 ' + user!.uid);
-          print('지금 데이터는 ' + data!['userID']);
-          print('여기야 여기!!!' + isParticipating.toString());
         }
       });
-      print('바깥이야 여기!!!' + isParticipating.toString());
     });
   }
-
-  // Future<bool> AmIpaticipating(Future<QuerySnapshot<Map<String, dynamic>>> myUserList) async {
-  //   bool outresult = false;
-  //   List<String> userIDList = [];
-  //
-  //   await myUserList.then((value){
-  //     if(userIDList.contains(value.docs.first.id) == false){
-  //       userIDList.add(value.docs.first.id);
-  //       print(value.docs.first.id);
-  //     }
-  //   });
-  //   userIDList.forEach((element) {print('============$element============');});
-  //   print('userIDList : ' + userIDList.toString());
-  //   return outresult;
-  //   // bool outresult = false;
-  //   // myUserList.get().then((QuerySnapshot querySnapshot) {
-  //   //   bool innerresult = false;
-  //   //   querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) => {
-  //   //   // Perform necessary operations without returning a value
-  //   //     print(documentSnapshot.get('userID')),
-  //   //
-  //   //     if(documentSnapshot.get('userID') == user?.uid){
-  //   //       innerresult = true,
-  //   //       print('innerresult : ' + innerresult.toString())
-  //   //     }
-  //   //   });
-  //   //   outresult = innerresult;
-  //   // });
-  //   // print('outresult : ' + outresult.toString());
-  //   // return outresult;
-  //
-  //   // bool result = false;
-  //   // myUserList.get().then((QueryDocumentSnapshot querySnapshot){
-  //   //   print(querySnapshot.data().toString());
-  //   //   if(querySnapshot.get('userID') == user?.uid) {
-  //   //     result = true;
-  //   //   }
-  //   // } as FutureOr Function(QuerySnapshot<Object?> value));
-  //   // return result;
-  //
-  //   // bool result = false;
-  //   // myUserList.get().then((QueryDocumentSnapshot querySnapshot){
-  //   //   print(querySnapshot.data().toString()
-  //   //       if(querySnapshot.get('userID') == user?.uid) {
-  //   //   result = true;
-  //   //   }
-  //   // } as FutureOr Function(QuerySnapshot<Object?> value));
-  //   // return result;
-  //
-  //   // List<String> userIDList = [];
-  //   // bool result = false;
-  //   // myUserList.get().then((QueryDocumentSnapshot querySnapshot){
-  //   //
-  //   //   userIDList.add(querySnapshot.get('userID'));
-  //   // } as FutureOr Function(QuerySnapshot<Object?> value));
-  //   // userIDList.forEach((element) {
-  //   //   if(element == user!.uid)
-  //   //     return true;
-  //   // });
-  //   // return result;
-  // }
-
-  // Widget checkWriter(CollectionReference myUserList)=>Container(
-  //   child: (amIpaticipating(myUserList)==true)? Text('내가 적었엉!!'): Text('내가 안 적었엉!!!'),
-  // );
 
   @override
   Widget build(BuildContext context) {
@@ -143,17 +74,18 @@ class _ListDetailPageState extends State<ListDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        myText('장소'),
+                        myBoldText('장소'),
                         SizedBox(height: 8.0),
-                        Text('${widget.post.pickupSpot}'),
+                        myLightText('${widget.post.pickupSpot}'),
                         SizedBox(height: 16.0),
-                        myText('모집 인원'),
+                        myBoldText('모집 인원'),
                         SizedBox(height: 8.0),
-                        Text('${widget.post.memCurrentCnt}/${widget.post.memTotalCnt}',),
+                        myLightText('${widget.post.memCurrentCnt}/${widget.post.memTotalCnt}',),
                         SizedBox(height: 16.0),
-                        myText('주문 시간'),
+                        myBoldText('주문 시간'),
                         SizedBox(height: 8.0),
-                        Text('${widget.post.orderTime}'),
+                        myLightText('${widget.post.orderTime}'),
+                        SizedBox(height: 8.0),
                         (isParticipating==true)? Text('내가 적었엉!!', style: TextStyle(fontSize: 30),): Text('내가 안 적었엉!!!', style: TextStyle(fontSize: 30),),
                       ],
                     ),
@@ -165,7 +97,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
         ),
       ),
 
-      bottomNavigationBar: ('${widget.post.orderTime}' == '주문 종료' ) ? SizedBox() : Container(
+      bottomNavigationBar: ('${widget.post.orderTime}' == '주문 종료' || isParticipating == true) ? SizedBox() : Container(
         decoration: BoxDecoration(
             color: Color(0xFF284463), //Color(0xFF98A5B3)
         ),
@@ -222,10 +154,20 @@ class _ListDetailPageState extends State<ListDetailPage> {
     ],
   );
 
-  Widget myText(text) => Text(
+
+
+  Widget myBoldText(text) => Text(
     '${text}',
     style: TextStyle(
+      fontSize: 20,
       fontWeight: FontWeight.bold,
+    ),
+  );
+
+  Widget myLightText(text) => Text(
+    '${text}',
+    style: TextStyle(
+      fontSize: 20,
     ),
   );
 }
