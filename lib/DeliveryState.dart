@@ -270,18 +270,9 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: FutureBuilder<String>(
-                  future: getStoreNameFromPost(),
-                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return Text('Store Name: ${snapshot.data}');
-                    }
-                  },
-                ),
+                // child: (
+                //   //Text();
+                // ),
               ),
             ],
           ),
