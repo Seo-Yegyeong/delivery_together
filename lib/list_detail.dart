@@ -33,6 +33,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                 content: Text('참여되었습니다'),
               ),
             );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryStatePage()));
           },
           child: const Text('네'),
         ),
@@ -68,15 +69,6 @@ class _ListDetailPageState extends State<ListDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '[ID]',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text('한동이'),
-                        SizedBox(height: 16.0),
                         Text(
                           '[장소]',
                           style: TextStyle(
@@ -136,7 +128,6 @@ class _ListDetailPageState extends State<ListDetailPage> {
                   return alertDialog;
                 },
               );
-              Get.to(()=>DeliveryStatePage());
             }
           ),
         ),
