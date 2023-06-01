@@ -1,3 +1,4 @@
+import 'package:delivery_together/MyOrder.dart';
 import 'package:delivery_together/utils/components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -78,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                 style: ElevatedButtonStyle,
                 onPressed: () {
-                  Get.to(() => MyInfo());
+                  Get.to(() => MyOrderPage());
                 },
                 child: const Text("주문 기록",style: TextStyle(fontSize: 18)),
               )
