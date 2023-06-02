@@ -24,6 +24,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool isWriter1 = false;
   int currentSlide = 0;
+  bool isChanged = false;
 
   List<String> imageList = [
     "assets/icon/startOrder.png",
@@ -136,6 +137,14 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         );
 
       }
+
+      if(isChanged){
+        // currentSlide를 db의 post 컬렉션의 state에 넣어야 한다.
+        docSnapshot.reference.update({
+          'state': currentSlide,
+        });
+      }
+
     }
 
     return nearestPost;
@@ -374,7 +383,6 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                   return GestureDetector(
                     onTap: () {
                       _controller.jumpToPage(entry.key);
-                      setState(() {});
                     },
                     child: Container(
                       margin: EdgeInsets.all(12),
@@ -395,6 +403,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
               isWriter1
                   ? GestureDetector(
                 onTap: () {
+                  isChanged = true;
                   if (currentSlide == imageList.length - 1) {
                     showDialog(
                       context: context,
