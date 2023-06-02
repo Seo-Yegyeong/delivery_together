@@ -349,6 +349,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                     });
                   }).toList(),
                   options: CarouselOptions(
+                    viewportFraction: 0.7,
                     height: 300.0,
                     autoPlay: false,
                     enableInfiniteScroll: false,
@@ -366,7 +367,8 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
               SizedBox(
                 height: 10,
               ),
-              Row(
+              isWriter1
+              ?Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: imageList.asMap().entries.map((entry) {
                   return GestureDetector(
@@ -389,7 +391,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                     ),
                   );
                 }).toList(),
-              ),
+              ): Container(),
               isWriter1
                   ? GestureDetector(
                 onTap: () {
