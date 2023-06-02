@@ -57,7 +57,6 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
     //
     // checkIsWriter();
     _fetchData();
-
   }
 
   Future<void> _fetchData() async {
@@ -79,8 +78,6 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
 
     getSlideState().then((value) => currentSlide = value);
     checkIsWriter();
-
-
   }
 
   Future<Post?> getNearestStore() async {
@@ -429,6 +426,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                     setState(() {
                       currentSlide = (currentSlide + 1) % imageList.length;
                       _controller.jumpToPage(currentSlide);
+                      updateSlideState(currentSlide);
                     });
                   }
                 },
@@ -451,10 +449,45 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                     ),
                   ),
                 ),
-              )
-               : Container(),
-
-
+              ) : StreamBuilder<DocumentSnapshot>(
+                stream: _firestore.collection('deliveryState').doc(user?.uid).snapshots(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Something went wrong');
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text("Loading");
+                  }
+                  int newCurrentSlide = snapshot.data?.get('currentSlide') ?? 0;
+                  _controller.jumpToPage(newCurrentSlide);
+                  return CarouselSlider(
+                    carouselController: _controller,
+                    items: imageList.map((imagePath) {
+                      return Builder(builder: (BuildContext context) {
+                        return Container(
+                          width: 250,
+                          height: 400,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.0),
+                            image: DecorationImage(
+                              image: AssetImage(imagePath), fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      });
+                    }).toList(),
+                    options: CarouselOptions(
+                      height: 300.0,
+                      autoPlay: false,
+                      enableInfiniteScroll: false,
+                      scrollPhysics: NeverScrollableScrollPhysics(),
+                      enlargeCenterPage: true,
+                      initialPage: newCurrentSlide,
+                    ),
+                  );
+                },
+              ),
 
                FutureBuilder<Post?>(
                   future: getNearestStore(),
