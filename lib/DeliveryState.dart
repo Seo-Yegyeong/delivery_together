@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'list.dart';
 
 class DeliveryStatePage extends StatefulWidget {
@@ -35,26 +36,52 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
     //checkWriterState().then((value) => setState(() => isWriter = value));
-    getSlideState().then((value) => currentSlide = value);
-    getEnteredRooms().then((value) {
-      setState(() {
-        enteredRooms = value;
-        print("enteredRooms입니다.");
-        print(value);
-        getNearestStore().then((value) {
-          if (value != null) {
-            setState(() {
-              nearestStore = value;
-            });
-          }
-        });
-      });
-    });
-    print("user입니다.");
-    print(user);
+    // getSlideState().then((value) => currentSlide = value);
+    // getEnteredRooms().then((value) {
+    //   setState(() {
+    //     enteredRooms = value;
+    //     print("enteredRooms입니다.");
+    //     print(value);
+    //     getNearestStore().then((value) {
+    //       if (value != null) {
+    //         setState(() {
+    //           nearestStore = value;
+    //         });
+    //       }
+    //     });
+    //   });
+    // });
+    // print("user입니다.");
+    // print(user);
+    //
+    // checkIsWriter();
+    _fetchData();
 
-    checkIsWriter();
   }
+
+  Future<void> _fetchData() async {
+    List<String> rooms = await getEnteredRooms();
+    setState(() {
+      enteredRooms = rooms;
+      print("enteredRooms입니다.");
+      print(rooms);
+    });
+
+    Post? nearest = await getNearestStore();
+    if (nearest != null) {
+      setState(() {
+        nearestStore = nearest;
+      });
+    }
+    print("didiididid");
+    print(nearestStore?.storeName);
+
+    getSlideState().then((value) => currentSlide = value);
+    checkIsWriter();
+
+
+  }
+
   Future<Post?> getNearestStore() async {
     QuerySnapshot postSnapshot = await FirebaseFirestore.instance
         .collection('post')
@@ -93,6 +120,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         DateTime createdTime = docSnapshot.get('createdTime').toDate();
         print(createdTime);
         String memo = docSnapshot.get('memo');
+        String link = docSnapshot.get('link');
 
 
         nearestPost = Post(
@@ -104,6 +132,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
           createdTime: createdTime,
           isWriter: true, postID: postID,
           memo: memo,
+          link: link,
         );
 
       }
@@ -200,12 +229,17 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         .collection('user')
         .doc(user?.uid)
         .collection('postList')
-        .where('postID', isEqualTo: nearestStore?.postID) // nearestStore의 postID와 일치하는 문서를 쿼리합니다.
+        .where('postId', isEqualTo: nearestStore?.postID) // nearestStore의 postID와 일치하는 문서를 쿼리합니다.
         .get();
+    print("in IsWriter() nearestStore");
+    print(nearestStore?.storeName);
+    print(postListSnapshot);
 
     if (postListSnapshot.docs.isNotEmpty) {
+      print("!");
       DocumentSnapshot postSnapshot = postListSnapshot.docs.first;
-
+      print(postSnapshot);
+      print(postSnapshot.get('postId'));
       setState(() {
         isWriter1 = postSnapshot.get('isWriter') ?? false;
         print("isWriter!!!!!!!!!!!!!!!!!!");
@@ -474,7 +508,8 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                                         fontSize: 20,
                                         color: Colors.black,),
                                     ),
-                                  ),
+                                  )
+                                  ,
                                   Container(
                                     width: 130,
                                     height: 40,
@@ -492,9 +527,20 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                                         color: Colors.black,),
                                     ),
                                   ),
+
+
                                 ],
                               ),
+
+                              TextButton(
+                                child: Text("Open chat Room link: "+nearestStore.link),
+                                onPressed: () {
+                                  var url = nearestStore.link; // 열고자 하는 웹 URL
+                                  launchURL(url);
+                                },
+                              ),
                             ],
+
                           ),
                         );
 
@@ -510,5 +556,13 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         ),
       ),
     );
+  }
+
+  void launchURL(String url) async {
+    if (await canLaunchUrl(url as Uri)) {
+      await launchUrl(url as Uri);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

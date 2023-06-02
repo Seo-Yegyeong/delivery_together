@@ -24,6 +24,7 @@ class Post {
   DateTime createdTime;
   bool isWriter;
   String memo;
+  String link;
 
   Post({
     required this.postID,
@@ -35,6 +36,7 @@ class Post {
     required this.createdTime,
     required this.isWriter,
     required this.memo,
+    required this.link,
   });
 }
 
@@ -63,6 +65,7 @@ class _ListPageState extends State<ListPage> {
       DateTime createdTime = doc['createdTime'].toDate();
       int remainingMinutes = calculateRemainingTime(orderTime);
       String memo = doc['memo'];
+      String link = doc['link'];
 
       String orderTimeString =
       remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString()+'분 후';
@@ -76,6 +79,7 @@ class _ListPageState extends State<ListPage> {
         createdTime: createdTime,
         isWriter: true,
         memo: memo,
+        link: link,
       );
       tempList.add(post);
       tempList.sort((a, b) => b.createdTime.compareTo(a.createdTime));
