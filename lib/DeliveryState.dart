@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'list.dart';
 
 class DeliveryStatePage extends StatefulWidget {
@@ -17,11 +18,13 @@ class DeliveryStatePage extends StatefulWidget {
 
 class _DeliveryStatePageState extends State<DeliveryStatePage> {
   User? user;
-  late List<String> enteredRooms;
+  late List<String> enteredRooms = [];
+  Post? nearestStore;
   CarouselController _controller = CarouselController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  bool isWriter = false;
+  bool isWriter1 = false;
   int currentSlide = 0;
+  bool isChanged = false;
 
   List<String> imageList = [
     "assets/icon/startOrder.png",
@@ -33,18 +36,50 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    checkWriterState().then((value) => setState(() => isWriter = value));
-    getSlideState().then((value) => currentSlide = value);
-    getEnteredRooms().then((value) {
-      print("enteredRoom입니다.");
-      setState(() {
-        print(value);
-        enteredRooms = value;
-      });
-    });
-    print("user입니다.");
-    print(user);
+    //checkWriterState().then((value) => setState(() => isWriter = value));
+    // getSlideState().then((value) => currentSlide = value);
+    // getEnteredRooms().then((value) {
+    //   setState(() {
+    //     enteredRooms = value;
+    //     print("enteredRooms입니다.");
+    //     print(value);
+    //     getNearestStore().then((value) {
+    //       if (value != null) {
+    //         setState(() {
+    //           nearestStore = value;
+    //         });
+    //       }
+    //     });
+    //   });
+    // });
+    // print("user입니다.");
+    // print(user);
+    //
+    // checkIsWriter();
+    _fetchData();
   }
+
+  Future<void> _fetchData() async {
+    List<String> rooms = await getEnteredRooms();
+    setState(() {
+      enteredRooms = rooms;
+      print("enteredRooms입니다.");
+      print(rooms);
+    });
+
+    Post? nearest = await getNearestStore();
+    if (nearest != null) {
+      setState(() {
+        nearestStore = nearest;
+      });
+    }
+    print("didiididid");
+    print(nearestStore?.storeName);
+
+    getSlideState().then((value) => currentSlide = value);
+    checkIsWriter();
+  }
+
   Future<Post?> getNearestStore() async {
     QuerySnapshot postSnapshot = await FirebaseFirestore.instance
         .collection('post')
@@ -75,7 +110,6 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         print(memCurrentCnt);
         DateTime orderTime = docSnapshot.get('orderTime').toDate();
         print(orderTime);
-        String memo = docSnapshot.get('memo');
         int remainingMinutes = calculateRemainingTime(orderTime);
         String orderTimeString =
         remainingMinutes == 0 ? '주문 종료' : remainingMinutes.toString()+'분 후';
@@ -83,6 +117,8 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         String postID = docSnapshot.id;
         DateTime createdTime = docSnapshot.get('createdTime').toDate();
         print(createdTime);
+        String memo = docSnapshot.get('memo');
+        String link = docSnapshot.get('link');
 
 
         nearestPost = Post(
@@ -94,9 +130,18 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
           createdTime: createdTime,
           isWriter: true, postID: postID,
           memo: memo,
+          link: link,
         );
 
       }
+
+      if(isChanged){
+        // currentSlide를 db의 post 컬렉션의 state에 넣어야 한다.
+        docSnapshot.reference.update({
+          'state': currentSlide,
+        });
+      }
+
     }
 
     return nearestPost;
@@ -116,12 +161,15 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
       QuerySnapshot userListSnapshot = await docSnapshot.reference
           .collection('userList')
           .where('userID', isEqualTo: user?.uid)
+          .limit(1)
           .get();
 
 
       if (userListSnapshot.docs.isNotEmpty) {
         enteredRooms.add(postId);
       }
+      print("entered room 입니다.//////");
+      print(enteredRooms);
     }
 
     return enteredRooms;
@@ -164,7 +212,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
   }
 
   void updateSlideState(int newSlide) async {
-    if (isWriter) {
+    if (isWriter1) {
       await _firestore
           .collection('deliveryState')
           .doc(user?.uid)
@@ -180,21 +228,49 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
   }
 
 
-  Future<bool> checkWriterState() async {
-    //DocumentSnapshot firstDoc;
+  Future<void> checkIsWriter() async {
+    DocumentSnapshot userSnapshot =
+    await _firestore.collection('user').doc(user?.uid).get();
+    QuerySnapshot postListSnapshot = await _firestore
+        .collection('user')
+        .doc(user?.uid)
+        .collection('postList')
+        .where('postId', isEqualTo: nearestStore?.postID) // nearestStore의 postID와 일치하는 문서를 쿼리합니다.
+        .get();
+    print("in IsWriter() nearestStore");
+    print(nearestStore?.storeName);
+    print(postListSnapshot);
 
-    QuerySnapshot myPost = await FirebaseFirestore.instance.collection('user').doc(user?.uid).collection('postList').get();
-    if (myPost.docs.isNotEmpty) {
-      isWriter = myPost.docs.first.get('isWriter');
-      updateWriterState(isWriter);
-      print("mypost에서의 postID");
-      print(myPost.docs.first.get('postId'));
+    if (postListSnapshot.docs.isNotEmpty) {
+      print("!");
+      DocumentSnapshot postSnapshot = postListSnapshot.docs.first;
+      print(postSnapshot);
+      print(postSnapshot.get('postId'));
+      setState(() {
+        isWriter1 = postSnapshot.get('isWriter') ?? false;
+        print("isWriter!!!!!!!!!!!!!!!!!!");
+        print(isWriter1);
+      });
     }
-    // QuerySnapshot querySnapshot = await _firestore.collection('post').doc('${widget.post.postID}').collection('userList');
-    // QuerySnapshot querySnapshot = await _firestore.collection('post-user').where('memberId', isEqualTo: user?.email).get();
 
-    return isWriter;
+
   }
+
+  // Future<bool> checkWriterState() async {
+  //   //DocumentSnapshot firstDoc;
+  //
+  //   QuerySnapshot myPost = await FirebaseFirestore.instance.collection('user').doc(user?.uid).collection('postList').get();
+  //   if (myPost.docs.isNotEmpty) {
+  //     isWriter1 = myPost.docs.first.get('isWriter');
+  //     updateWriterState(isWriter1);
+  //     print("mypost에서의 postID");
+  //     print(myPost.docs.first.get('postId'));
+  //   }
+  //   // QuerySnapshot querySnapshot = await _firestore.collection('post').doc('${widget.post.postID}').collection('userList');
+  //   // QuerySnapshot querySnapshot = await _firestore.collection('post-user').where('memberId', isEqualTo: user?.email).get();
+  //
+  //   return isWriter1;
+  // }
 
   Future<int> getSlideState() async {
     final DocumentSnapshot snapshot =
@@ -279,6 +355,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                     });
                   }).toList(),
                   options: CarouselOptions(
+                    viewportFraction: 0.7,
                     height: 300.0,
                     autoPlay: false,
                     enableInfiniteScroll: false,
@@ -296,13 +373,13 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
               SizedBox(
                 height: 10,
               ),
-              Row(
+              isWriter1
+              ?Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: imageList.asMap().entries.map((entry) {
                   return GestureDetector(
                     onTap: () {
                       _controller.jumpToPage(entry.key);
-                      setState(() {});
                     },
                     child: Container(
                       margin: EdgeInsets.all(12),
@@ -319,11 +396,11 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                     ),
                   );
                 }).toList(),
-              ),
-              isWriter
-                  ? Container()
-                  : GestureDetector(
+              ): Container(),
+              isWriter1
+                  ? GestureDetector(
                 onTap: () {
+                  isChanged = true;
                   if (currentSlide == imageList.length - 1) {
                     showDialog(
                       context: context,
@@ -349,6 +426,7 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                     setState(() {
                       currentSlide = (currentSlide + 1) % imageList.length;
                       _controller.jumpToPage(currentSlide);
+                      updateSlideState(currentSlide);
                     });
                   }
                 },
@@ -371,9 +449,45 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                     ),
                   ),
                 ),
+              ) : StreamBuilder<DocumentSnapshot>(
+                stream: _firestore.collection('deliveryState').doc(user?.uid).snapshots(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Something went wrong');
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text("Loading");
+                  }
+                  int newCurrentSlide = snapshot.data?.get('currentSlide') ?? 0;
+                  _controller.jumpToPage(newCurrentSlide);
+                  return CarouselSlider(
+                    carouselController: _controller,
+                    items: imageList.map((imagePath) {
+                      return Builder(builder: (BuildContext context) {
+                        return Container(
+                          width: 250,
+                          height: 400,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.0),
+                            image: DecorationImage(
+                              image: AssetImage(imagePath), fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      });
+                    }).toList(),
+                    options: CarouselOptions(
+                      height: 300.0,
+                      autoPlay: false,
+                      enableInfiniteScroll: false,
+                      scrollPhysics: NeverScrollableScrollPhysics(),
+                      enlargeCenterPage: true,
+                      initialPage: newCurrentSlide,
+                    ),
+                  );
+                },
               ),
-
-
 
                FutureBuilder<Post?>(
                   future: getNearestStore(),
@@ -438,7 +552,8 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                                         fontSize: 20,
                                         color: Colors.black,),
                                     ),
-                                  ),
+                                  )
+                                  ,
                                   Container(
                                     width: 130,
                                     height: 40,
@@ -456,9 +571,20 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
                                         color: Colors.black,),
                                     ),
                                   ),
+
+
                                 ],
                               ),
+
+                              TextButton(
+                                child: Text("Open chat Room link: "+nearestStore.link),
+                                onPressed: () {
+                                  var url = nearestStore.link; // 열고자 하는 웹 URL
+                                  launchURL(url);
+                                },
+                              ),
                             ],
+
                           ),
                         );
 
@@ -474,5 +600,13 @@ class _DeliveryStatePageState extends State<DeliveryStatePage> {
         ),
       ),
     );
+  }
+
+  void launchURL(String url) async {
+    if (await canLaunchUrl(url as Uri)) {
+      await launchUrl(url as Uri);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
