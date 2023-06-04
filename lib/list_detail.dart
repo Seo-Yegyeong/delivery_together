@@ -99,7 +99,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         SizedBox(height: 5.0),
                         myLightText(widget.post.memo),
                         SizedBox(height: 16.0),
-                        (isParticipating == true)? Text('나 이미 참여 중이양!', style: TextStyle(fontSize: 30),): Text('나 아직 참여 안 했옹!!', style: TextStyle(fontSize: 30),)
+                        // (isParticipating == true)? Text('나 이미 참여 중이양!', style: TextStyle(fontSize: 30),): Text('나 아직 참여 안 했옹!!', style: TextStyle(fontSize: 30),)
                         // _testText.elementAt(index)
                       ],
                     ),
